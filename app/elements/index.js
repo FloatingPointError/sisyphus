@@ -6,6 +6,10 @@ export const domElements = {
     mainContent: document.querySelector('main'),
     animationCanvas: document.querySelector('#animationCanvas'),
     startButton: document.querySelector('#startButton'),
+    generateMountainsButton: document.querySelector('#generateMountainsButton'),
+    numMountainsSlider: document.querySelector('#numMountainsSlider'),
+    currentNumMountainsSpan: document.querySelector('#currentNumMountains'),
+    includePlateausCheckbox: document.querySelector('#includePlateausCheckbox'),
     resetButton: document.querySelector('#resetButton'),
     speedSlider: document.querySelector('#speedSlider'),
     currentSpeedSpan: document.querySelector('#currentSpeed')
