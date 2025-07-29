@@ -1,4 +1,5 @@
 import { domElements } from './elements/index.js';
+import { getBallColor } from './elements/ballColorModule.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = domElements.animationCanvas;
@@ -17,52 +18,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const fullscreenButton = document.getElementById('fullscreenButton');
     const controlsContainer = document.getElementById('controlsContainer');
 
-    // Canvas afmetingen (worden nu dynamisch bijgehouden)
+    // Nieuwe controls voor vingerkleuren
+    const numFingersSlider = document.getElementById('numFingersSlider');
+    const currentNumFingersSpan = document.getElementById('currentNumFingers');
+    const fingerColorInputs = [
+        document.getElementById('fingerColor1'),
+        document.getElementById('fingerColor2'),
+        document.getElementById('fingerColor3'),
+        document.getElementById('fingerColor4')
+    ];
+
     let canvasWidth = canvas.width;
     let canvasHeight = canvas.height;
 
-    // Bal eigenschappen
+    function setCanvasWidthCssVariable() {
+        document.documentElement.style.setProperty('--canvas-width', `${canvas.clientWidth}px`);
+    }
+
     const ballRadius = 15;
     let ballX = ballRadius;
     let ballY = canvasHeight / 2;
     let ballSpeed = parseFloat(speedSlider.value);
     let animationId = null;
+    let countdownIntervalId = null;
 
-    // Lijn eigenschappen
     const lineWidth = 2;
     const lineColor = '#2c3e50';
 
-    // --- Definieer de paden ---
-    // Pad voor de vlakke lijn (Y blijft constant)
     const flatPath = {
         points: [{ x: 0, y: canvasHeight / 2 }, { x: canvasWidth, y: canvasHeight / 2 }],
-        curves: [] // Deze wordt later gevuld door generateMountainPath voor de vlakke lijn
+        curves: []
     };
-    // Initialize flatPath.curves for the plain line immediately after canvasWidth/Height are known
-    flatPath.curves = [{
-        p0: { x: 0, y: flatPath.points[0].y },
-        p1: { x: canvasWidth / 2, y: flatPath.points[0].y }, // Control point op dezelfde Y
-        p2: { x: canvasWidth, y: flatPath.points[0].y }
-    }];
 
+    function initializeFlatPathCurves() {
+        flatPath.points = [{ x: 0, y: canvasHeight / 2 }, { x: canvasWidth, y: canvasHeight / 2 }];
+        flatPath.curves = [{
+            p0: { x: 0, y: flatPath.points[0].y },
+            p1: { x: canvasWidth / 2, y: flatPath.points[0].y },
+            p2: { x: canvasWidth, y: flatPath.points[0].y }
+        }];
+    }
+    initializeFlatPathCurves();
 
-    let currentPathData = flatPath; // Start met de vlakke lijn
+    let currentPathData = flatPath;
+    let isCountingDown = false;
+    let countdownValue = 4;
 
-    // Functie om een punt op een kwadratische Bezier curve te berekenen
+    // ... (getPointOnBezier, getYForX, generateMountainPath - deze blijven ongewijzigd) ...
+
     function getPointOnBezier(t, p0, p1, p2) {
         const x = Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x;
         const y = Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y;
         return { x, y };
     }
 
-    // Functie om de Y-positie van de bal te berekenen op basis van zijn X-positie
-    // Dit gebruikt nu de voorgedefinieerde Bezier curve segmenten
     function getYForX(x, pathData) {
         if (!pathData || !pathData.curves || pathData.curves.length === 0) {
-            return canvasHeight / 2; // Valback als er geen pad is
+            return canvasHeight / 2;
         }
 
-        // Deel het segment in kleine stapjes en zoek de t die het dichtst bij x komt
         const numSteps = 100;
 
         for (let i = 0; i < pathData.curves.length; i++) {
@@ -72,12 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let closestT = 0;
             let smallestDiff = Infinity;
 
-            // Check of de x-positie van de bal binnen de X-grenzen van deze curve valt
-            // (Dit is een vereenvoudiging, want Bezier curves kunnen buiten hun ankerpunten komen)
             const curveMinX = Math.min(p0.x, p1.x, p2.x);
             const curveMaxX = Math.max(p0.x, p1.x, p2.x);
 
-            if (x >= curveMinX - 1 && x <= curveMaxX + 1) { // Kleine marge toevoegen
+            if (x >= curveMinX - 1 && x <= curveMaxX + 1) {
                 for (let step = 0; step <= numSteps; step++) {
                     const currentT = step / numSteps;
                     const pointOnCurve = getPointOnBezier(currentT, p0, p1, p2);
@@ -93,14 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // Als x buiten alle curves valt (bijv. aan het begin/einde), blijf dan op de start/eind Y
         if (x < pathData.points[0].x) return pathData.points[0].y;
         if (x > pathData.points[pathData.points.length - 1].x) return pathData.points[pathData.points.length - 1].y;
 
-        return canvasHeight / 2; // Valback
+        return canvasHeight / 2;
     }
 
-    // --- Aangepaste functie: Genereer een willekeurig bergpad met ronde toppen ---
     function generateMountainPath(numSegments, includePlateaus) {
         const generatedPoints = [];
         const curves = [];
@@ -110,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const segmentWidth = canvasWidth / numSegments;
         const plateauChance = 0.3;
 
-        // Startpunt van het hele pad
         generatedPoints.push({ x: 0, y: canvasHeight / 2 });
 
         for (let i = 0; i < numSegments; i++) {
@@ -143,21 +152,18 @@ document.addEventListener('DOMContentLoaded', () => {
             p0 = endPointOfCurve;
         }
         
-        // Speciale afhandeling voor vlakke lijn: als er maar twee punten zijn (start en eind),
-        // maak dan een enkele Bezier curve die een rechte lijn voorstelt.
-        if (generatedPoints.length === 2) {
+        if (generatedPoints.length === 2 && !includePlateaus) {
             curves.push({ 
                 p0: generatedPoints[0], 
-                p1: { x: (generatedPoints[0].x + generatedPoints[1].x) / 2, y: generatedPoints[0].y }, // Controlepunt op dezelfde Y
+                p1: { x: (generatedPoints[0].x + generatedPoints[1].x) / 2, y: generatedPoints[0].y },
                 p2: generatedPoints[1] 
             });
         }
 
-
         return { points: generatedPoints, curves: curves };
     }
 
-    // Functie om de bal en de lijn te tekenen (nu met Bezier curves)
+    // Functie om de bal en de lijn te tekenen, en nu ook de countdown en de dynamische balkleur
     function draw() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
@@ -173,17 +179,34 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.stroke();
         }
 
-        // Teken de bal
-        ctx.beginPath();
-        ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-        ctx.fillStyle = '#e74c3c';
-        ctx.fill();
-        ctx.strokeStyle = '#c0392b';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        // Teken de bal ALLEEN als de countdown NIET loopt
+        if (!isCountingDown) {
+            // Haal de huidige instellingen op voor de bal kleur
+            const numFingers = parseInt(numFingersSlider.value);
+            const selectedFingerColors = fingerColorInputs.map(input => input.value);
+
+            // Gebruik de geïmporteerde functie om de balkleur te krijgen
+            const ballColor = getBallColor(ballY, canvasHeight, numFingers, selectedFingerColors);
+
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = ballColor; // Gebruik de dynamische kleur
+            ctx.fill();
+            ctx.strokeStyle = '#c0392b'; // Randkleur blijft hetzelfde
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Teken de countdown timer
+        if (isCountingDown) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.font = 'bold 80px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(countdownValue, canvasWidth / 2, canvasHeight / 2);
+        }
     }
 
-    // Functie om de balpositie te updaten
     function update() {
         ballX += ballSpeed;
 
@@ -194,32 +217,49 @@ document.addEventListener('DOMContentLoaded', () => {
         ballY = getYForX(ballX, currentPathData);
     }
 
-    // De animatieloop
     function animate() {
-        update();
+        if (!isCountingDown) {
+            update();
+        }
         draw();
         animationId = requestAnimationFrame(animate);
     }
 
-    // Functie om de animatie te starten met een specifiek pad
-    function startAnimation(pathData) {
+    function startAnimationOrCountdown(pathData) {
         cancelAnimationFrame(animationId);
+        clearInterval(countdownIntervalId);
         animationId = null;
         currentPathData = pathData;
         resetBall();
-        animate();
         updateButtonLabels();
+
+        isCountingDown = true;
+        countdownValue = 4;
+        draw();
+        
+        const beatInterval = 1200; 
+
+        countdownIntervalId = setInterval(() => {
+            countdownValue--;
+            if (countdownValue > 0) {
+                draw();
+            } else {
+                clearInterval(countdownIntervalId);
+                isCountingDown = false;
+                animate();
+            }
+        }, beatInterval);
     }
 
-    // Functie om de bal te resetten naar de startpositie van het huidige pad
     function resetBall() {
+        cancelAnimationFrame(animationId);
+        clearInterval(countdownIntervalId);
+        isCountingDown = false;
         ballX = ballRadius;
-        // Zorg ervoor dat ballY ook correct gezet wordt bij reset
         ballY = getYForX(ballX, currentPathData);
         draw();
     }
 
-    // Update de teksten op de startknoppen
     function updateButtonLabels() {
         startButton.textContent = "Herstart Vlakke Lijn";
         generateMountainsButton.textContent = "Herstart Bergen";
@@ -227,19 +267,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners voor de knoppen en sliders ---
     startButton.addEventListener('click', () => {
-        startAnimation(flatPath);
+        startAnimationOrCountdown(flatPath);
     });
 
     generateMountainsButton.addEventListener('click', () => {
         const numMountains = parseInt(numMountainsSlider.value);
         const includePlateaus = includePlateausCheckbox.checked;
         const newMountainPathData = generateMountainPath(numMountains, includePlateaus);
-        startAnimation(newMountainPathData);
+        startAnimationOrCountdown(newMountainPathData);
     });
 
     resetButton.addEventListener('click', () => {
-        cancelAnimationFrame(animationId);
-        animationId = null;
         resetBall();
         startButton.textContent = "Start Vlakke Lijn";
         generateMountainsButton.textContent = "Genereer & Start Bergen";
@@ -254,7 +292,25 @@ document.addEventListener('DOMContentLoaded', () => {
         currentNumMountainsSpan.textContent = numMountainsSlider.value;
     });
 
-    // --- Nieuwe Event Listeners voor togglen controls en fullscreen ---
+    // Nieuwe event listener voor aantal vingers slider
+    numFingersSlider.addEventListener('input', () => {
+        currentNumFingersSpan.textContent = numFingersSlider.value;
+        // Forceer een hertekening zodat de balkleur direct update als de bal al beweegt
+        if (!isCountingDown && animationId) {
+            draw();
+        }
+    });
+
+    // Event listeners voor de kleur inputvelden
+    fingerColorInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            // Forceer een hertekening zodat de balkleur direct update als de bal al beweegt
+            if (!isCountingDown && animationId) {
+                draw();
+            }
+        });
+    });
+
 
     toggleControlsButton.addEventListener('click', () => {
         controlsContainer.classList.toggle('hidden');
@@ -275,46 +331,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Pas canvas afmetingen aan bij (de)activeren fullscreen
     document.addEventListener('fullscreenchange', () => {
         if (document.fullscreenElement) {
             appContainer.classList.add('fullscreen');
-            // Pas canvas afmetingen aan voor fullscreen
-            canvasWidth = window.innerWidth * 0.95; // Bijna volle breedte
-            canvasHeight = window.innerHeight * 0.80; // Bijna volle hoogte
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
-            resetBall(); // Reset de balpositie en herteken de lijn op de nieuwe schaal
+            canvasWidth = window.innerWidth * 0.95;
+            canvasHeight = window.innerHeight * 0.80;
         } else {
             appContainer.classList.remove('fullscreen');
-            // Herstel canvas afmetingen naar initieel
             canvasWidth = 1000;
             canvasHeight = 300;
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
-            resetBall(); // Reset de balpositie en herteken de lijn
         }
-        // Forceer een hergeneratie van het bergpad om aan de nieuwe afmetingen aan te passen
-        if (currentPathData !== flatPath) { // Alleen als het geen vlakke lijn is
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        setCanvasWidthCssVariable();
+
+        if (currentPathData === flatPath) {
+            initializeFlatPathCurves();
+            currentPathData = flatPath;
+        } else {
             const numMountains = parseInt(numMountainsSlider.value);
             const includePlateaus = includePlateausCheckbox.checked;
             const newMountainPathData = generateMountainPath(numMountains, includePlateaus);
             currentPathData = newMountainPathData;
-        } else {
-             // Zorg dat flatPath ook de juiste canvas afmetingen gebruikt
-            flatPath.points = [{ x: 0, y: canvasHeight / 2 }, { x: canvasWidth, y: canvasHeight / 2 }];
-            flatPath.curves = [{
-                p0: { x: 0, y: flatPath.points[0].y },
-                p1: { x: canvasWidth / 2, y: flatPath.points[0].y },
-                p2: { x: canvasWidth, y: flatPath.points[0].y }
-            }];
-            currentPathData = flatPath;
         }
-        // Na aanpassing van de afmetingen en paden, herteken.
-        draw();
+        resetBall(); 
     });
 
-
-    // Initial tekening bij het laden van de pagina
+    // --- Initialisatie bij het laden van de pagina ---
+    setCanvasWidthCssVariable();
     draw();
 });

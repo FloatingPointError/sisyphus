@@ -7,18 +7,21 @@
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
-    <div id="appContainer"> <h1>Volg de Bal!</h1>
+        <div id="appContainer">
+        <h1>Volg de Bal!</h1>
         <p>Navigeer door de dynamisch gegenereerde landschappen. Let op toonhoogte en snelheid!</p>
 
         <canvas id="animationCanvas" width="1000" height="300"></canvas>
 
         <div id="controlsContainer" class="visible">
-            <div class="controls-group"> <button id="startButton">Start Vlakke Lijn</button>
+            <div class="controls-group">
+                <button id="startButton">Start Vlakke Lijn</button>
                 <button id="generateMountainsButton">Genereer & Start Bergen</button>
                 <button id="resetButton">Reset</button>
             </div>
 
-            <div class="controls-group"> <label for="speedSlider">Snelheid:</label>
+            <div class="controls-group">
+                <label for="speedSlider">Snelheid:</label>
                 <input type="range" id="speedSlider" min="0.5" max="5" value="2" step="0.1">
                 <span id="currentSpeed">2.0x</span>
 
@@ -29,10 +32,21 @@
                 <input type="checkbox" id="includePlateausCheckbox">
                 <label for="includePlateausCheckbox">Inclusief Vlaktes</label>
             </div>
+
+            <div class="controls-group"> <label for="numFingersSlider">Aantal Vingers:</label>
+                <input type="range" id="numFingersSlider" min="1" max="4" value="4" step="1">
+                <span id="currentNumFingers">4</span>
+
+                <label for="fingerColor1">Vinger 1 Kleur:</label>
+                <input type="color" id="fingerColor1" value="#FF0000"> <label for="fingerColor2">Vinger 2 Kleur:</label>
+                <input type="color" id="fingerColor2" value="#0000FF"> <label for="fingerColor3">Vinger 3 Kleur:</label>
+                <input type="color" id="fingerColor3" value="#00FF00"> <label for="fingerColor4">Vinger 4 Kleur:</label>
+                <input type="color" id="fingerColor4" value="#FFA500"> </div>
         </div>
 
-        <div class="app-buttons"> <button id="toggleControlsButton">Verberg Knoppen</button>
-            <button id="fullscreenButton">Volledig scherm</button>
+        <div class="app-buttons">
+            <button id="toggleControlsButton">Verberg Controls</button>
+            <button id="fullscreenButton">Full Screen</button>
         </div>
     </div>
     
