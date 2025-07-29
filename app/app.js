@@ -12,31 +12,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentNumMountainsSpan = domElements.currentNumMountainsSpan; // Span voor huidig aantal bergen
     const includePlateausCheckbox = domElements.includePlateausCheckbox; // Checkbox voor plateaus
 
-    // Canvas afmetingen
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
+    // Nieuwe knoppen
+    const toggleControlsButton = document.getElementById('toggleControlsButton');
+    const fullscreenButton = document.getElementById('fullscreenButton');
+    const controlsContainer = document.getElementById('controlsContainer');
+
+    // Canvas afmetingen (worden nu dynamisch bijgehouden)
+    let canvasWidth = canvas.width;
+    let canvasHeight = canvas.height;
 
     // Bal eigenschappen
     const ballRadius = 15;
     let ballX = ballRadius;
-    let ballY = canvasHeight / 2; // Initieel op de helft van de hoogte
+    let ballY = canvasHeight / 2;
     let ballSpeed = parseFloat(speedSlider.value);
     let animationId = null;
 
     // Lijn eigenschappen
     const lineWidth = 2;
     const lineColor = '#2c3e50';
-    // De lijn Y-positie wordt nu dynamisch bepaald, of we tekenen hem helemaal niet meer in bergmodus.
-    // Voorlopig houden we de lijn voor de vlakke oefening.
 
-// --- Definieer de paden ---
+    // --- Definieer de paden ---
     // Pad voor de vlakke lijn (Y blijft constant)
     const flatPath = {
-        // We slaan nu de punten op in een 'points' array
         points: [{ x: 0, y: canvasHeight / 2 }, { x: canvasWidth, y: canvasHeight / 2 }],
-        // En genereren hier de 'curve data' voor de vlakke lijn
-        curves: [{ p0: { x: 0, y: canvasHeight / 2 }, p1: { x: canvasWidth / 2, y: canvasHeight / 2 }, p2: { x: canvasWidth, y: canvasHeight / 2 } }]
+        curves: [] // Deze wordt later gevuld door generateMountainPath voor de vlakke lijn
     };
+    // Initialize flatPath.curves for the plain line immediately after canvasWidth/Height are known
+    flatPath.curves = [{
+        p0: { x: 0, y: flatPath.points[0].y },
+        p1: { x: canvasWidth / 2, y: flatPath.points[0].y }, // Control point op dezelfde Y
+        p2: { x: canvasWidth, y: flatPath.points[0].y }
+    }];
 
 
     let currentPathData = flatPath; // Start met de vlakke lijn
@@ -51,33 +58,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Functie om de Y-positie van de bal te berekenen op basis van zijn X-positie
     // Dit gebruikt nu de voorgedefinieerde Bezier curve segmenten
     function getYForX(x, pathData) {
-        // Iterate over de gedefinieerde curves
+        if (!pathData || !pathData.curves || pathData.curves.length === 0) {
+            return canvasHeight / 2; // Valback als er geen pad is
+        }
+
+        // Deel het segment in kleine stapjes en zoek de t die het dichtst bij x komt
+        const numSteps = 100;
+
         for (let i = 0; i < pathData.curves.length; i++) {
             const curve = pathData.curves[i];
-            const { p0, p1, p2 } = curve; // Start, controle, eindpunt van de curve
+            const { p0, p1, p2 } = curve;
+
+            let closestT = 0;
+            let smallestDiff = Infinity;
 
             // Check of de x-positie van de bal binnen de X-grenzen van deze curve valt
             // (Dit is een vereenvoudiging, want Bezier curves kunnen buiten hun ankerpunten komen)
-            const minX = Math.min(p0.x, p1.x, p2.x);
-            const maxX = Math.max(p0.x, p1.x, p2.x);
+            const curveMinX = Math.min(p0.x, p1.x, p2.x);
+            const curveMaxX = Math.max(p0.x, p1.x, p2.x);
 
-            if (x >= minX && x <= maxX) {
-                // Nu moeten we de 't' waarde vinden (0 tot 1) die overeenkomt met de huidige 'x'
-                // Dit is complexer voor kwadratische curven, omdat 'x' niet lineair schaalt met 't'.
-                // We gebruiken een binaire zoektocht of numerieke benadering hiervoor.
-                // Voor simpele gevallen kunnen we uitgaan van een monotone X-beweging.
-
-                // Eenvoudige benadering: veronderstel dat X lineair loopt van p0.x naar p2.x
-                // En als het controlepunt p1.x er te veel van afwijkt, dan nemen we de min/max van alle 3 punten.
-                // Dit is niet perfect, maar werkt voor de meeste "berg" curven.
-                
-                let t = 0;
-                // Deel het segment in kleine stapjes en zoek de t die het dichtst bij x komt
-                // Dit is niet de meest performante oplossing, maar wel eenvoudig te begrijpen.
-                const numSteps = 100;
-                let closestT = 0;
-                let smallestDiff = Infinity;
-
+            if (x >= curveMinX - 1 && x <= curveMaxX + 1) { // Kleine marge toevoegen
                 for (let step = 0; step <= numSteps; step++) {
                     const currentT = step / numSteps;
                     const pointOnCurve = getPointOnBezier(currentT, p0, p1, p2);
@@ -88,10 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         closestT = currentT;
                     }
                 }
-                t = closestT;
-
-                // Bereken de Y-waarde voor deze 't'
-                const { y } = getPointOnBezier(t, p0, p1, p2);
+                const { y } = getPointOnBezier(closestT, p0, p1, p2);
                 return y;
             }
         }
@@ -100,16 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (x < pathData.points[0].x) return pathData.points[0].y;
         if (x > pathData.points[pathData.points.length - 1].x) return pathData.points[pathData.points.length - 1].y;
 
-        // Als geen curve gevonden, retourneer de laatste bekende Y of de midden Y.
-        return canvasHeight / 2;
+        return canvasHeight / 2; // Valback
     }
 
     // --- Aangepaste functie: Genereer een willekeurig bergpad met ronde toppen ---
-    // Deze functie retourneert nu een object met zowel de 'points' (voor de generator)
-    // als de 'curves' (de Bezier curve segmenten voor draw en getYForX).
     function generateMountainPath(numSegments, includePlateaus) {
-        const generatedPoints = []; // Dit zijn de 'piek/dal' ankerpunten
-        const curves = []; // Dit zijn de eigenlijke Bezier curve definities (p0, p1, p2)
+        const generatedPoints = [];
+        const curves = [];
 
         const minHeight = canvasHeight * 0.1;
         const maxHeight = canvasHeight * 0.9;
@@ -119,14 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Startpunt van het hele pad
         generatedPoints.push({ x: 0, y: canvasHeight / 2 });
 
-        // Genereer de hoofdankerpunten (de 'pieken' en 'dalen')
         for (let i = 0; i < numSegments; i++) {
             const currentX = (i + 1) * segmentWidth;
 
             if (includePlateaus && Math.random() < plateauChance && i < numSegments - 1) {
-                // Vlakte: voeg een extra punt toe om een horizontale lijn te forceren
-                // Dit werkt door het control point en end point van de curve hetzelfde te maken
-                const plateauEndPointX = currentX - (segmentWidth / 2); // Einde van de vlakte
+                const plateauEndPointX = currentX - (segmentWidth / 2);
                 const plateauY = generatedPoints[generatedPoints.length - 1].y;
                 generatedPoints.push({ x: plateauEndPointX, y: plateauY });
             }
@@ -135,34 +126,20 @@ document.addEventListener('DOMContentLoaded', () => {
             generatedPoints.push({ x: currentX, y: nextY });
         }
 
-        // Nu, genereer de Bezier curves op basis van de gegenereerde punten
-        // We gaan van ankerpunt naar ankerpunt.
-        // Een kwadratische Bezier curve heeft een startpunt (P0), een controlepunt (P1), en een eindpunt (P2).
-        // Om afgevlakte hoeken te krijgen, gebruiken we de middenpunten van de segmenten als ankerpunten (P0, P2)
-        // en de oorspronkelijke gegenereerde punten als controlepunten (P1).
-
-        // Voeg het startpunt van de eerste curve toe
         let p0 = generatedPoints[0];
-        // En het controlepunt is het tweede generatedPoint
-        let p1 = generatedPoints[1];
-
+        
         for (let i = 0; i < generatedPoints.length - 1; i++) {
-            // Het eindpunt (P2) van de huidige curve is het midden tussen het huidige controlepunt (generatedPoints[i+1])
-            // en het volgende gegenereerde punt (generatedPoints[i+2])
             let nextPoint = generatedPoints[i + 1];
-            let endPointOfCurve = {}; // Dit wordt p2
+            let endPointOfCurve = {};
 
-            if (i === generatedPoints.length - 2) { // Laatste segment
-                endPointOfCurve = nextPoint; // Het laatste punt is het echte eindpunt
+            if (i === generatedPoints.length - 2) {
+                endPointOfCurve = nextPoint;
             } else {
                 endPointOfCurve.x = (nextPoint.x + generatedPoints[i+2].x) / 2;
                 endPointOfCurve.y = (nextPoint.y + generatedPoints[i+2].y) / 2;
             }
 
-            // De curve bestaat uit P0 (start), P1 (controle), P2 (eind)
             curves.push({ p0: p0, p1: nextPoint, p2: endPointOfCurve });
-
-            // Voor de volgende iteratie wordt het eindpunt van de huidige curve het startpunt
             p0 = endPointOfCurve;
         }
         
@@ -184,23 +161,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function draw() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-        // Teken het huidige pad (als de "lijn")
-        ctx.beginPath();
-        // Start bij het eerste punt van de eerste curve
-        ctx.moveTo(currentPathData.curves[0].p0.x, currentPathData.curves[0].p0.y);
+        if (currentPathData && currentPathData.curves && currentPathData.curves.length > 0) {
+            ctx.beginPath();
+            ctx.moveTo(currentPathData.curves[0].p0.x, currentPathData.curves[0].p0.y);
 
-        // Teken elk Bezier curve segment
-        currentPathData.curves.forEach(curve => {
-            ctx.quadraticCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y);
-        });
-        ctx.lineWidth = lineWidth;
-        ctx.strokeStyle = lineColor;
-        ctx.stroke();
+            currentPathData.curves.forEach(curve => {
+                ctx.quadraticCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y);
+            });
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = lineColor;
+            ctx.stroke();
+        }
 
         // Teken de bal
         ctx.beginPath();
         ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-        ctx.fillStyle = '#e74c3c'; // Rode bal
+        ctx.fillStyle = '#e74c3c';
         ctx.fill();
         ctx.strokeStyle = '#c0392b';
         ctx.lineWidth = 1;
@@ -211,12 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function update() {
         ballX += ballSpeed;
 
-        // Reset de bal als hij buiten beeld is
         if (ballX > canvasWidth + ballRadius) {
-            ballX = -ballRadius; // Start de bal net buiten beeld aan de linkerkant
+            ballX = -ballRadius;
         }
 
-        // Bereken de nieuwe Y-positie op basis van het huidige pad
         ballY = getYForX(ballX, currentPathData);
     }
 
@@ -231,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function startAnimation(pathData) {
         cancelAnimationFrame(animationId);
         animationId = null;
-        currentPathData = pathData; // Let op: nu is het 'pathData' object
+        currentPathData = pathData;
         resetBall();
         animate();
         updateButtonLabels();
@@ -279,6 +253,67 @@ document.addEventListener('DOMContentLoaded', () => {
     numMountainsSlider.addEventListener('input', () => {
         currentNumMountainsSpan.textContent = numMountainsSlider.value;
     });
+
+    // --- Nieuwe Event Listeners voor togglen controls en fullscreen ---
+
+    toggleControlsButton.addEventListener('click', () => {
+        controlsContainer.classList.toggle('hidden');
+        if (controlsContainer.classList.contains('hidden')) {
+            toggleControlsButton.textContent = "Toon Controls";
+        } else {
+            toggleControlsButton.textContent = "Verberg Controls";
+        }
+    });
+
+    fullscreenButton.addEventListener('click', () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            appContainer.requestFullscreen().catch(err => {
+                alert(`Fout bij fullscreen: ${err.message} (zorg dat de browser dit toestaat)`);
+            });
+        }
+    });
+
+    // Pas canvas afmetingen aan bij (de)activeren fullscreen
+    document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) {
+            appContainer.classList.add('fullscreen');
+            // Pas canvas afmetingen aan voor fullscreen
+            canvasWidth = window.innerWidth * 0.95; // Bijna volle breedte
+            canvasHeight = window.innerHeight * 0.80; // Bijna volle hoogte
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            resetBall(); // Reset de balpositie en herteken de lijn op de nieuwe schaal
+        } else {
+            appContainer.classList.remove('fullscreen');
+            // Herstel canvas afmetingen naar initieel
+            canvasWidth = 1000;
+            canvasHeight = 300;
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            resetBall(); // Reset de balpositie en herteken de lijn
+        }
+        // Forceer een hergeneratie van het bergpad om aan de nieuwe afmetingen aan te passen
+        if (currentPathData !== flatPath) { // Alleen als het geen vlakke lijn is
+            const numMountains = parseInt(numMountainsSlider.value);
+            const includePlateaus = includePlateausCheckbox.checked;
+            const newMountainPathData = generateMountainPath(numMountains, includePlateaus);
+            currentPathData = newMountainPathData;
+        } else {
+             // Zorg dat flatPath ook de juiste canvas afmetingen gebruikt
+            flatPath.points = [{ x: 0, y: canvasHeight / 2 }, { x: canvasWidth, y: canvasHeight / 2 }];
+            flatPath.curves = [{
+                p0: { x: 0, y: flatPath.points[0].y },
+                p1: { x: canvasWidth / 2, y: flatPath.points[0].y },
+                p2: { x: canvasWidth, y: flatPath.points[0].y }
+            }];
+            currentPathData = flatPath;
+        }
+        // Na aanpassing van de afmetingen en paden, herteken.
+        draw();
+    });
+
 
     // Initial tekening bij het laden van de pagina
     draw();
