@@ -1,16 +1,30 @@
 // Exports for the elements module
 export const domElements = {
-    // Add your DOM elements here
-    header: document.querySelector('header'),
-    footer: document.querySelector('footer'),
-    mainContent: document.querySelector('main'),
-    animationCanvas: document.querySelector('#animationCanvas'),
-    startButton: document.querySelector('#startButton'),
-    generateMountainsButton: document.querySelector('#generateMountainsButton'),
-    numMountainsSlider: document.querySelector('#numMountainsSlider'),
-    currentNumMountainsSpan: document.querySelector('#currentNumMountains'),
-    includePlateausCheckbox: document.querySelector('#includePlateausCheckbox'),
-    resetButton: document.querySelector('#resetButton'),
-    speedSlider: document.querySelector('#speedSlider'),
-    currentSpeedSpan: document.querySelector('#currentSpeed')
+    // Elementen die we nodig hebben voor de applicatie
+    // Deze elementen worden gebruikt in de app.js en andere modules
+    appContainer: document.getElementById('appContainer'),
+    canvas: document.getElementById('animationCanvas'),
+    startButton: document.getElementById('startButton'),
+    generateMountainsButton: document.getElementById('generateMountainsButton'),
+    resetButton: document.getElementById('resetButton'),
+    speedSlider: document.getElementById('speedSlider'),
+    currentSpeedSpan: document.getElementById('currentSpeed'),
+    numMountainsSlider: document.getElementById('numMountainsSlider'),
+    currentNumMountainsSpan: document.getElementById('currentNumMountains'),
+    includePlateausCheckbox: document.getElementById('includePlateausCheckbox'),
+    toggleControlsButton: document.getElementById('toggleControlsButton'),
+    fullscreenButton: document.getElementById('fullscreenButton'),
+    controlsContainer: document.getElementById('controlsContainer'),
+    numFingersSlider: document.getElementById('numFingersSlider'),
+    currentNumFingersSpan: document.getElementById('currentNumFingers'),
+    fingerColorInputs: [
+        document.getElementById('fingerColor1'),
+        document.getElementById('fingerColor2'),
+        document.getElementById('fingerColor3'),
+        document.getElementById('fingerColor4')
+    ],
+    colorTempoSlider: document.getElementById('colorTempoSlider'),
+    currentColorTempoSpan: document.getElementById('currentColorTempo'),
+    hideExplainerText: document.querySelector('#hideExplainerText'),
+    explainerText: document.querySelector('#explainerText'),
 }

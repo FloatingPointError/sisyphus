@@ -1,225 +1,295 @@
+/* styles/style.css */
+
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     min-height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
     color: #333;
-    overflow: hidden;
+    /* overflow: hidden; Voorkom onnodige scrollbalken op de body */
 }
 
 #appContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    transition: all 0.3s ease-in-out;
+    display: flex; /* Maak de container een flex container */
+    flex-direction: column; /* Stapel items verticaal */
+    align-items: normal; /* Centreer items horizontaal */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 90%; /* Een beetje minder breedte om marge te geven */
+    max-width: 1200px; /* Maximale breedte voor grote schermen */
+    box-sizing: border-box; /* Zorg dat padding en border in de breedte vallen */
+    height: auto; /* Laat de hoogte zich aanpassen aan de inhoud */
+    overflow: hidden; /* Voorkom overflow problemen binnen de container zelf */
 }
 
 #appContainer.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw; /* Viewport width */
-    height: 100vh; /* Viewport height */
-    background-color: #f0f0f0; /* Zorg voor een consistente achtergrond in fullscreen */
-    z-index: 9999; /* Zorg dat het boven alles ligt */
+    width: 100vw; /* Volledige breedte van de viewport */
+    height: 100vh; /* Volledige hoogte van de viewport */
+    border-radius: 0;
+    padding: 0; /* Geen padding in fullscreen om max ruimte te benutten */
+    justify-content: flex-start; /* Begin bovenaan in fullscreen */
+    overflow: auto; /* Laat de container scrollen als de inhoud te groot is */
 }
 
-
-h1, p {
-    text-align: center;
-    margin-bottom: 10px;
+/* NIEUW: Styling voor de explainer div */
+.explainer {
+    background-color: #d3e3fd; /* Lichtblauwe achtergrond */
+    color: #0851bb; /* Donkerblauwe tekstkleur */
+    border: 1px solid #b3e5fc; /* Lichtblauwe rand */
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    max-width: 800px; /* Beperk de breedte voor leesbaarheid */
+    box-sizing: border-box;
+    transition: max-height 0.5s ease-out, opacity 0.5s ease-out, padding 0.5s ease-out; /* Vloeiende overgang */
+    overflow: hidden; /* Voorkom dat content buiten de box valt tijdens transitie */
 }
 
+/* NIEUW: Klasse om de explainer div te verbergen */
+#explainerText.hidden {
+    max-height: 0; /* Krimpt de hoogte naar 0 */
+    opacity: 0; /* Maakt het onzichtbaar */
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border: none; /* Verwijder rand als het verborgen is */
+}
+
+/* NIEUW: Styling voor de "Verberg deze tekst" knop/link */
+#hideExplainerText {
+    font-size: 0.9em;
+    color: #3498db; /* Blauwe link kleur */
+    cursor: pointer; /* Maak het een klikbare cursor */
+    text-decoration: underline; /* Onderstreep het */
+    text-align: right; /* Lijn de tekst rechts uit */
+    margin-top: 10px; /* Ruimte boven de link */
+    margin-bottom: 0; /* Geen marge onderaan */
+    padding-right: 5px; /* Kleine padding rechts */
+}
+
+#hideExplainerText:hover {
+    color: #2980b9; /* Donkerder blauw bij hover */
+}
 canvas {
-    border: 2px solid #3498db;
+    border: 2px solid #2c3e50;
+    border-radius: 5px;
     background-color: #ecf0f1;
     display: block;
     margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    /* Flexibelere breedte/hoogte in fullscreen */
-    max-width: 95vw;
-    max-height: 80vh;
-    object-fit: contain; /* Zorgt dat de canvasinhoud past zonder te rekken */
+    flex-shrink: 0; /* Voorkom dat het canvas krimpt in flex container */
+    max-width: 100%; /* Zorgt ervoor dat het element niet overloopt als JS een te grote breedte instelt */
+    height: auto; /* Zorgt ervoor dat de browser de hoogte proportioneel aanpast als er een max-width is */
+    box-sizing: content-box; /* Zorgt ervoor dat de border en padding in de breedte vallen */
 }
 
 #controlsContainer {
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    display: flex;
+    flex-wrap: wrap; /* Zorg dat groepen kunnen wrappen */
+    justify-content: center; /* Centreer groepen in de container */
+    gap: 15px; /* Ruimte tussen control-groepen */
+    margin-top: 20px;
     margin-bottom: 20px;
-    /* Belangrijk: breedte van het canvas overnemen */
-    width: var(--canvas-width, 1000px); /* Gebruik CSS variabele of fallback naar 1000px */
-    max-width: 95vw; /* Zorg dat het niet breder wordt dan het viewport */
-    box-sizing: border-box; /* Padding/border meerekenen in de breedte */
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    box-sizing: content-box;
 }
 
 #controlsContainer.hidden {
-    opacity: 0;
-    visibility: hidden;
-    height: 0;
-    margin-bottom: 0;
+    display: none;
 }
 
-/* Aanpassingen voor de hoofd-controls container */
-.controls {
-    display: flex; /* Maak er een flex-container van */
-    flex-direction: column; /* Stapel de groepen verticaal */
-    gap: 15px; /* Ruimte tussen de groepen */
-    background-color: #fff;
-    padding: 15px 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Neem de volledige breedte van de parent (#controlsContainer) */
-    box-sizing: border-box; /* Zorg dat padding meedoet in de 100% breedte */
-}
-
-.controls-group button, .app-buttons button {
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.controls-group button:hover, .app-buttons button:hover {
-    background-color: #27ae60;
-}
-
-.controls-group button#resetButton {
-    background-color: #e74c3c;
-}
-
-.controls-group button#resetButton:hover {
-    background-color: #c0392b;
-}
-
-/* Styling voor de individuele groepen knoppen/sliders */
 .controls-group {
     display: flex;
-    flex-wrap: wrap; /* Laat items naar de volgende regel springen indien nodig */
-    justify-content: left; /* Centreer de items in de groep */
-    align-items: center;
-    gap: 15px; /* Ruimte tussen de items binnen een groep */
-    /* margin-bottom: 1.5rem; Ruimte onder de groep */
-    margin-top: 1.5rem; /* Ruimte boven de groep */
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start; /* Items bovenaan uitlijnen */
+    gap: 8px; /* Algemene ruimte tussen de elementen in de groep */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    flex: 1;
+    min-width: 250px;
+    max-height: fit-content; /* Laat de hoogte zich aanpassen aan de inhoud */
 }
 
 .controls-group label {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #555;
-    /* Geen margin-left hier, de gap op controls-group regelt dit */
+    /* margin-bottom: 0; <--- Deze kan nu weg, de gap in slider-row regelt het */
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
-.controls-group input[type="range"] {
-    width: 150px;
-    -webkit-appearance: none;
-    height: 8px;
-    background: #ddd;
-    border-radius: 5px;
-    outline: none;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    margin-top: 1rem; /* Ruimte tussen label en slider */
+/* De .slider-row omhult nu alleen het label en de input */
+.controls-group .slider-row {
+    display: flex;
+    align-items: center; /* Centreer label en input verticaal t.o.v. elkaar */
+    gap: 10px; /* Ruimte tussen label en input */
+    margin-bottom: 0.5rem;
 }
 
-.controls-group input[type="range"]:hover {
-    opacity: 1;
+/* Aanpassingen voor de input elementen binnen de slider-row */
+.controls-group .slider-row input[type="range"],
+.controls-group .slider-row input[type="color"] {
+    margin-bottom: 0; /* Geen marge hier */
+    flex-grow: 1; /* Laat de input de resterende ruimte vullen */
 }
 
-
-.controls-group input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #3498db;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+/* Aanpassingen voor de inclusief vlaktes knop */
+.controls-group .include-plateaus-row {
+    display: flex;
+    align-items: baseline; /* Centreer checkbox en label verticaal */
+    gap: 10px; /* Ruimte tussen checkbox en label */
 }
 
-.controls-group input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #3498db;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.controls-group input[type="range"]::-moz-range-thumb:hover {
-    background-color: #2980b9;
-}
-
+/* Specifieke aanpassing voor de checkbox (die waarschijnlijk geen .slider-row heeft) */
 .controls-group input[type="checkbox"] {
-    /* Geen margin-left hier, de gap op controls-group regelt dit */
-    transform: scale(1.3);
+    margin-bottom: 0;
+    /* vergroot de checkbox */
+    width: 1rem; /* Breder maken */
+    height: 1rem; /* Hoger maken */
+    flex-shrink: 0; /* Voorkom dat de checkbox krimpt */
+    cursor: pointer; /* Maak de cursor een pointer om aan te geven dat het klikbaar is */
+    align-self: anchor-center; /* Zorg dat de checkbox op dezelfde hoogte blijft als de label */
 }
 
-/* Voeg toe aan de .controls-group sectie of apart */
-.controls input[type="color"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 40px; /* Kleinere breedte */
-    height: 25px; /* Kleinere hoogte */
-    background-color: transparent;
-    border: 1px solid #ccc;
-    padding: 0;
+/* Zorg dat de input velden ook goed uitgelijnd zijn */
+.controls-group .color-picker-row {
+    display: flex;
+    align-items: center; /* Centreer label en input verticaal t.o.v. elkaar */
+    gap: 10px; /* Ruimte tussen label en input */
+}
+
+
+/* Ensure the label next to the checkbox also behaves well */
+.controls-group .include-plateaus-row label {
+    font-weight: normal; /* Labels next to checkboxes are often not bold */
+    margin: 0; /* Remove default margins */
+}
+
+/* De span staat nu direct in de controls-group */
+.controls-group span {
+    font-weight: normal;
+    color: #777;
+    /* font-size: 0.9em; */
+    margin-bottom: 0; /* Geen marge hier */
+    /* text-align: left; <--- Optioneel, als je het links wilt uitlijnen */
+}
+
+.controls-group button {
+    background-color: #d3e3fd;
+    color: #0851bb;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    border-radius: 3px;
-    vertical-align: middle; /* Zorgt voor betere uitlijning met labels */
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: auto; /* Duwt de knop naar de onderkant */
 }
 
-.controls input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-
-.controls input[type="color"]::-webkit-color-swatch {
-    border: none;
-    border-radius: 3px;
-}
-
-.controls input[type="color"]::-moz-color-swatch-wrapper {
-    padding: 0;
-}
-
-.controls input[type="color"]::-moz-color-swatch {
-    border: none;
-    border-radius: 3px;
-}
-
-#currentSpeed, #currentNumMountains {
-    font-weight: bold;
-    color: #3498db;
-    width: 40px;
-    text-align: right;
+.controls-group button:hover {
+    background-color: #2980b9;
+    color: white;
 }
 
 .app-buttons {
-    margin-top: 1rem; /* Ruimte boven de knoppen */
-    margin-bottom: 1.5rem; /* Ruimte onder de knoppen */
     display: flex;
-    gap: 10px;
-    /* Belangrijk: breedte van het canvas overnemen */
-    width: var(--canvas-width, 1000px); /* Gebruik CSS variabele of fallback naar 1000px */
-    max-width: 95vw; /* Zorg dat het niet breder wordt dan het viewport */
-    justify-content: left; /* Centreer de knoppen binnen deze container */
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .app-buttons button {
-    background-color: #34495e;
+    background-color: #31363b;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .app-buttons button:hover {
-    background-color: #2c3e50;
+    background-color: black;
+}
+
+
+/* --- Media Queries for Mobile --- */
+@media (max-width: 768px) {
+    #appContainer {
+        width: 95%; /* Iets meer breedte op kleinere schermen */
+        padding: 10px;
+    }
+
+    #appContainer h1 {
+        font-size: 1.5em; /* Kleinere titel op mobiel */
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    #appContainer p {
+        font-size: 0.9em; /* Kleinere tekst op mobiel */
+        margin-bottom: 10px;
+    }
+
+    canvas {
+        margin-bottom: 10px; /* Minder marge onder canvas op mobiel */
+    }
+
+    #controlsContainer {
+        padding: 10px;
+        width: 100%; /* Volledige breedte van appContainer */
+        box-sizing: border-box; /* Zorg dat padding en border in de breedte vallen */
+    }
+
+    .controls-group {
+        width: 100%; /* Groepen nemen volledige breedte in op mobiel */
+        min-width: unset; /* Haal minimum breedte weg */
+        align-items: stretch; /* Stretch items binnen de groep */
+        padding: 8px;
+        flex: unset; /* Laat groepen hun eigen breedte hebben */
+    }
+
+    .controls-group label,
+    .controls-group span,
+    .controls-group input,
+    .controls-group button {
+        margin-bottom: 3px; /* Minder marge tussen elementen in groep */
+    }
+
+    .app-buttons {
+        flex-direction: column; /* Stapel app-knoppen verticaal op mobiel */
+        gap: 10px;
+        width: 100%;
+    }
+
+    .app-buttons button {
+        width: 100%; /* Volledige breedte voor app-knoppen op mobiel */
+        min-width: unset;
+    }
+
+    .explainer {
+        padding: 10px 15px; /* Minder padding op mobiel */
+        margin-bottom: 10px;
+    }
+
+    #hideExplainerText {
+        text-align: center; /* Centreer de link op mobiel */
+    }
+}
+
+
+/* Specifieke aanpassing voor de kleurkiezers die geen span hebben */
+.controls-group label[for^="fingerColor"] + input[type="color"] {
+    margin-top: 5px; /* Geef wat ruimte boven de kleurkiezers */
 }
