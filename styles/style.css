@@ -69,21 +69,20 @@ header {
 }
 
 canvas {
-    border: 2px solid #2c3e50;
+    border: 2px solid black; /* Zwarte rand */
     border-radius: 5px;
-    background-color: #ecf0f1;
+    background-color: #FFFFFF; /* Witte achtergrond */
     display: block;
     margin-bottom: 20px;
-    flex-shrink: 0; /* Voorkom dat het canvas krimpt in flex container */
-    max-width: 100%; /* Zorgt ervoor dat het element niet overloopt als JS een te grote breedte instelt */
-    height: auto; /* Zorgt ervoor dat de browser de hoogte proportioneel aanpast als er een max-width is */
-    box-sizing: content-box; /* Zorgt ervoor dat de border en padding in de breedte vallen */
+    flex-shrink: 0;
+    max-width: 100%;
+    height: auto;
 }
 
 canvas.glowing {
     /* Basis gloei-effect, dit wordt geactiveerd als de canvas de 'glowing' class krijgt */
     filter: drop-shadow(0 0 50px rgba(255, 255, 255, 1)); /* Fellere, bredere witte gloed */
-    transition: filter 0.1s ease-out; /* Iets langere, vloeiendere transitie */
+    transition: filter 0.4s ease-out; /* Iets langere, vloeiendere transitie */
 }
 
 #controlsContainer {
@@ -96,7 +95,7 @@ canvas.glowing {
     padding: 15px;
     background-color: #f8f8f8;
     border-radius: 5px;
-    box-sizing: content-box;
+    box-sizing: border-box;
 }
 
 #controlsContainer.hidden {

@@ -1,6 +1,7 @@
 // script.js
 import { initializeBallColorLogic, getDirectBallColor, updateColorTempo, setOnColorChangeCallback, updateFingerColors, getCurrentBeatIntervalMs } from './elements/ballColorModule.js';
 import { domElements } from './elements/index.js';
+import { drawSkyElements } from './elements/skyElements.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const {
@@ -179,6 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function draw() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        // Teken de lucht elementen via de module
+        drawSkyElements(ctx, canvasWidth, canvasHeight);
 
         if (currentPathData && currentPathData.curves && currentPathData.curves.length > 0) {
             ctx.beginPath();
@@ -441,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
     adjustCanvasSizeAndPath(); 
     
     currentSpeedSpan.textContent = speedSlider.value + 'x';
-    currentNumMountainsSpan.textContent = numMountainsSlider.value;
+    // currentNumMountainsSpan.textContent = numMountainsSlider.value;
     currentColorTempoSpan.textContent = colorTempoSlider.value + ' BPM';
     currentNumFingersSpan.textContent = numFingersSlider.value;
 
