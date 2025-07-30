@@ -8,40 +8,21 @@
 </head>
 <body>
     <div id="appContainer">
-        <div class="explainer">
-            <h1>Omgekeerde Sisyphus - Volg de Bal!</h1>
-            <div id="explainerText">
-                <p>Navigeer door de dynamisch gegenereerde landschappen. Let op toonhoogte en snelheid!</p>
-                <p>
-                    Kies een beginpunt waar je wilt starten. Dit mag overal op 1 snaar zijn. Wanneer de bal naar beneden
-                    gaat pas je de toonhoogte aan naar beneden. Wanneer de bal omhoog gaat pas je de toonhoogte
-                    aan naar boven. Wanneer de bal op een plateau is zoals bij de vlakkke lijn blijft de toonhoogte gelijk.
-                </p>
-                <p>
-                    Gebruik de regelaars om de snelheid, het aantal hellingen, en andere instellingen aan te passen.
-                </p>
-                <p>
-                    Gebruik de kleurkiezers om voor elke vinger een kleur te kiezen. De kleuren worden gebruikt om aan te geven
-                    wanneer je van vinger moet wisselen. Met de kleurtempo regelaar kun je de snelheid van de kleurwisselingen aanpassen. Je kunt
-                    hier het best beginnen met chromatische toonhoogtes, maar je kunt ook kiezen voor een andere toonhoogtevolgorde. Probeer dit eerst
-                    op een vlakke lijn, en pas daarna de hellingen aan.
-                </p>
-            </div>
-            
 
-            <p id="hideExplainerText">Verberg uitleg</p>
-        </div>
+        <!-- <header>
+            <h2>Sisyphus - volg de bal!</h2>
+        </header> -->
         
         <canvas id="animationCanvas" width="1000" height="300"></canvas>
 
         <div id="controlsContainer" class="visible">
-            <div class="controls-group">
+            <div class="controls-group flex-row">
                 <button id="startButton">Start Vlakke Lijn</button>
                 <button id="generateMountainsButton">Genereer & Start Hellingen</button>
                 <button id="resetButton">Reset</button>
             </div>
 
-            <div class="controls-group">
+            <div class="controls-group flex-row">
                 <div class="slider-row">
                     <label for="speedSlider">Snelheid:</label>
                     <input type="range" id="speedSlider" min="0.5" max="5" value="2" step="0.1">
@@ -60,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="controls-group"> 
+            <div class="controls-group flex-row"> 
                 <div class="slider-row">
                     <label for="numFingersSlider">Aantal Vingers:</label>
                     <input type="range" id="numFingersSlider" min="1" max="4" value="1" step="1">
@@ -70,35 +51,42 @@
 
                 <div class="slider-row">
                     <label for="colorTempoSlider">Kleur Tempo:</label>
-                    <input type="range" id="colorTempoSlider" min="50" max="160" value="50" step="1">
+                    <input type="range" id="colorTempoSlider" min="30" max="100" value="40" step="1">
                     <span id="currentColorTempo">50 BPM</span>    
                 </div>
                 
-                <div class="color-picker-row">
-                    <label for="fingerColor1">Kleur vinger 1:</label>
-                    <input type="color" id="fingerColor1" value="#FF0000"> 
+                <div class="color-picker-group">
+                    <div class="color-picker-row">
+                        <label for="fingerColor1">Kleur vinger 1:</label>
+                        <input type="color" id="fingerColor1" value="#FF0000"> 
+                    </div>
+                
+                    <div class="color-picker-row">
+                        <label for="fingerColor2">Kleur vinger 2:</label>
+                        <input type="color" id="fingerColor2" value="#0000FF"> 
+                    </div>
+                    
+                    <div class="color-picker-row">
+                        <label for="fingerColor3">Kleur vinger 3:</label>
+                        <input type="color" id="fingerColor3" value="#00FF00"> 
+                    </div>
+                    
+                    <div class="color-picker-row">
+                        <label for="fingerColor4">Kleur vinger 4:</label>
+                        <input type="color" id="fingerColor4" value="#FFA500">
+                    </div>
                 </div>
                 
-                <div class="color-picker-row">
-                    <label for="fingerColor2">Kleur vinger 2:</label>
-                    <input type="color" id="fingerColor2" value="#0000FF"> 
-                </div>
-                
-                <div class="color-picker-row">
-                    <label for="fingerColor3">Kleur vinger 3:</label>
-                    <input type="color" id="fingerColor3" value="#00FF00"> 
-                </div>
-                
-                <div class="color-picker-row">
-                    <label for="fingerColor4">Kleur vinger 4:</label>
-                    <input type="color" id="fingerColor4" value="#FFA500">
-                </div>
             </div>
         </div>
 
         <div class="app-buttons">
             <button id="toggleControlsButton">Verberg knoppen</button>
             <button id="fullscreenButton">Volledig scherm</button>
+            <button>
+                <a href="uitleg.html" class="app-button-link">Lees de uitleg</a></div>
+            </button>
+            
         </div>
     </div>
     

@@ -1,5 +1,6 @@
 // ballColorModule.js
 
+// Functie om de RGB-componenten van een hex-kleurstring te converteren naar een object
 function hexToRgb(hex) {
     const r = parseInt(hex.substring(1, 3), 16);
     const g = parseInt(hex.substring(3, 5), 16);
@@ -7,81 +8,123 @@ function hexToRgb(hex) {
     return { r, g, b };
 }
 
+// Functie om een RGB-object te converteren naar een CSS RGB string
 function rgbToCss(rgb) {
     return `rgb(${Math.round(rgb.r)}, ${Math.round(rgb.g)}, ${Math.round(rgb.b)})`;
 }
 
 // Interne staat van de module
-let currentFingerIndex = 0; // De vinger die NU actief is (0-indexed)
-let nextColorChangeTime = 0; // Tijdstempel voor wanneer de volgende kleurwisseling moet plaatsvinden
-let currentBeatIntervalMs = 1200; // Standaard 50 BPM (60000ms / 50 = 1200ms)
+let currentFingerIndex = 0; // The finger that is CURRENTLY active (0-indexed)
+let nextColorChangeTime = 0; // Timestamp for when the next color change should occur
+let currentBeatIntervalMs = 1200; // Default 50 BPM (60000ms / 50 = 1200ms)
+let internalFingerColors = []; // Internal array to store the current finger colors
+
+// Callback function for when a color changes
+let onColorChangeCallback = null;
 
 /**
- * Initialiseert de vingerkleurlogica.
- * Wordt aangeroepen bij de start van een animatie of reset.
- * @param {number} initialNumFingers - Het initiële aantal vingers om mee te starten.
- * @param {number} initialTempoBPM - Het initiële tempo in BPM.
+ * Initializes the finger color logic.
+ * Called at the start of an animation or reset.
+ * @param {number} initialNumFingers - The initial number of fingers to start with.
+ * @param {number} initialTempoBPM - The initial tempo in BPM.
+ * @param {string[]} initialFingerColors - An array with hex color strings for each finger.
  */
-export function initializeBallColorLogic(initialNumFingers, initialTempoBPM) {
-    // Stel de startvinger willekeurig in, gebaseerd op het aantal vingers
+export function initializeBallColorLogic(initialNumFingers, initialTempoBPM, initialFingerColors) {
+    // Set the starting finger randomly, based on the number of fingers
     currentFingerIndex = Math.floor(Math.random() * initialNumFingers);
-    // Bereken het beatInterval op basis van het initiële tempo
-    currentBeatIntervalMs = 60000 / initialTempoBPM;
-    // De eerste wisseling is over 1 beat interval vanaf nu
+    // Calculate the beat interval based on the initial tempo
+    currentBeatIntervalMs = calculateColorTempoMs(initialTempoBPM);
+    // The first change is 1 beat interval from now
     nextColorChangeTime = performance.now() + currentBeatIntervalMs;
+    internalFingerColors = initialFingerColors; // Store initial colors internally
 }
 
 /**
- * Update het tempo voor de kleurverandering.
- * @param {number} newTempoBPM - Het nieuwe tempo in BPM.
+ * Updates the tempo for the color change.
+ * @param {number} newTempoBPM - The new tempo in BPM.
  */
 export function updateColorTempo(newTempoBPM) {
     const oldBeatIntervalMs = currentBeatIntervalMs;
     currentBeatIntervalMs = 60000 / newTempoBPM;
 
-    // Pas nextColorChangeTime aan om de overgang consistent te houden
-    // Als we al bezig zijn met een interval, behoud de relatieve voortgang
+    // Adjust nextColorChangeTime to keep the transition consistent
+    // If we are already in an interval, maintain the relative progress
     const timeIntoCurrentBeat = performance.now() - (nextColorChangeTime - oldBeatIntervalMs);
     const progressIntoCurrentBeat = timeIntoCurrentBeat / oldBeatIntervalMs;
 
-    // Plan de volgende wisseling met het nieuwe interval, vanaf het huidige 'relatieve' punt
+    // Plan the next change with the new interval, from the current 'relative' point
     nextColorChangeTime = performance.now() - (progressIntoCurrentBeat * currentBeatIntervalMs) + currentBeatIntervalMs;
 }
 
+/**
+ * Updates the internal finger colors array.
+ * @param {string[]} newColors - The new array of hex color strings.
+ */
+export function updateFingerColors(newColors) {
+    internalFingerColors = newColors;
+}
 
 /**
- * Berekent de huidige kleur van de bal. De kleur wisselt direct
- * op basis van het ingestelde BPM.
+ * Calculates the current color of the ball. The color changes instantly
+ * based on the set BPM.
  *
- * @param {number} currentTime - Het huidige tijdstempel (performance.now()).
- * @param {number} numFingers - Het aantal actieve vingers (1-4).
- * @param {string[]} fingerColors - Een array met hex-kleurstrings voor elke vinger.
- * @returns {string} De berekende RGB-kleurstring.
+ * @param {number} currentTime - The current timestamp (performance.now()).
+ * @param {number} numFingers - The number of active fingers (1-4).
+ * @returns {string} The calculated RGB color string.
  */
-export function getDirectBallColor(currentTime, numFingers, fingerColors) {
-    if (numFingers < 1 || numFingers > 4 || !fingerColors || fingerColors.length === 0) {
-        return '#e74c3c'; // Fallback naar rode bal
+export function getDirectBallColor(currentTime, numFingers) { // Removed fingerColors from args, use internalFingerColors
+    // Ensure numFingers is valid, otherwise use a fallback
+    if (numFingers < 1 || numFingers > 4 || !internalFingerColors || internalFingerColors.length === 0) {
+        return '#e74c3c'; // Fallback to red ball
     }
 
-    if (numFingers === 1) { // Als er maar 1 vinger is, toon altijd die kleur
-        return fingerColors[0];
+    if (numFingers === 1) { // If there's only 1 finger, always show that color
+        currentFingerIndex = 0; // Ensure index is 0 for single finger
+        return internalFingerColors[0];
     }
 
-    // Controleer of het tijd is om van kleur te wisselen
+    // Check if it's time to change color
     if (currentTime >= nextColorChangeTime) {
-        // Kies een willekeurige nieuwe vinger, exclusief de huidige als mogelijk
+        // Choose a random new finger, excluding the current one if possible
         let newFingerIndex;
         do {
             newFingerIndex = Math.floor(Math.random() * numFingers);
-        } while (newFingerIndex === currentFingerIndex && numFingers > 1); // Blijf kiezen totdat het een andere vinger is, tenzij er maar 1 vinger is
+        } while (newFingerIndex === currentFingerIndex && numFingers > 1); // Keep choosing until it's a different finger, unless there's only 1 finger
 
-        currentFingerIndex = newFingerIndex; // Update de actieve vinger
-        nextColorChangeTime = currentTime + currentBeatIntervalMs; // Plan de volgende wisseling met het dynamische interval
+        currentFingerIndex = newFingerIndex; // Update the active finger
+        nextColorChangeTime = currentTime + currentBeatIntervalMs; // Plan the next change with the dynamic interval
+
+        // Call the callback when the color changes
+        if (onColorChangeCallback) {
+            onColorChangeCallback();
+        }
     }
 
-    // Retourneer de kleur van de actieve vinger
-    const activeColorHex = fingerColors[currentFingerIndex];
+    // Return the color of the active finger
+    const activeColorHex = internalFingerColors[currentFingerIndex];
     const rgb = hexToRgb(activeColorHex);
     
     return rgbToCss(rgb);
+}
+
+/**
+ * Sets the callback function to be executed when the ball's color changes.
+ * @param {function} callback - The function to call.
+ */
+export function setOnColorChangeCallback(callback) {
+    onColorChangeCallback = callback;
+}
+
+/**
+ * Returns the current beat interval in milliseconds.
+ * @returns {number} The current beat interval in milliseconds.
+ */
+export function getCurrentBeatIntervalMs() {
+    return currentBeatIntervalMs;
+}
+
+// Helper to convert BPM to milliseconds per beat
+function calculateColorTempoMs(tempoBPM) {
+    if (tempoBPM <= 0) return 60000; // Prevent division by zero or negative values
+    return (60000 / tempoBPM); // Convert BPM to milliseconds per 'beat'/change
 }

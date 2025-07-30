@@ -12,6 +12,23 @@ body {
     /* overflow: hidden; Voorkom onnodige scrollbalken op de body */
 }
 
+h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+}
+
+h2 {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+h3 {
+    font-size: clamp(1.2rem, 3vw, 2rem);
+}
+
+p {
+    /* Paragraaftekst: minimaal 1rem, maximaal 1.2rem, bij voorkeur 1vw */
+    font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
+}
+
 #appContainer {
     display: flex; /* Maak de container een flex container */
     flex-direction: column; /* Stapel items verticaal */
@@ -37,46 +54,20 @@ body {
 }
 
 /* NIEUW: Styling voor de explainer div */
-.explainer {
-    background-color: #d3e3fd; /* Lichtblauwe achtergrond */
+header {
+    /* background-color: #d3e3fd; Lichtblauwe achtergrond */
     color: #0851bb; /* Donkerblauwe tekstkleur */
-    border: 1px solid #b3e5fc; /* Lichtblauwe rand */
-    border-radius: 8px;
+    /* border: 1px solid #b3e5fc; Lichtblauwe rand */
+    /* border-radius: 8px; */
     padding: 15px 20px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    max-width: 800px; /* Beperk de breedte voor leesbaarheid */
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); */
+    max-width: fit-content; /* Beperk de breedte voor leesbaarheid */
     box-sizing: border-box;
-    transition: max-height 0.5s ease-out, opacity 0.5s ease-out, padding 0.5s ease-out; /* Vloeiende overgang */
     overflow: hidden; /* Voorkom dat content buiten de box valt tijdens transitie */
+    flex-direction: column; flex-wrap: nowrap; display: flex;
 }
 
-/* NIEUW: Klasse om de explainer div te verbergen */
-#explainerText.hidden {
-    max-height: 0; /* Krimpt de hoogte naar 0 */
-    opacity: 0; /* Maakt het onzichtbaar */
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    border: none; /* Verwijder rand als het verborgen is */
-}
-
-/* NIEUW: Styling voor de "Verberg deze tekst" knop/link */
-#hideExplainerText {
-    font-size: 0.9em;
-    color: #3498db; /* Blauwe link kleur */
-    cursor: pointer; /* Maak het een klikbare cursor */
-    text-decoration: underline; /* Onderstreep het */
-    text-align: right; /* Lijn de tekst rechts uit */
-    margin-top: 10px; /* Ruimte boven de link */
-    margin-bottom: 0; /* Geen marge onderaan */
-    padding-right: 5px; /* Kleine padding rechts */
-}
-
-#hideExplainerText:hover {
-    color: #2980b9; /* Donkerder blauw bij hover */
-}
 canvas {
     border: 2px solid #2c3e50;
     border-radius: 5px;
@@ -87,6 +78,12 @@ canvas {
     max-width: 100%; /* Zorgt ervoor dat het element niet overloopt als JS een te grote breedte instelt */
     height: auto; /* Zorgt ervoor dat de browser de hoogte proportioneel aanpast als er een max-width is */
     box-sizing: content-box; /* Zorgt ervoor dat de border en padding in de breedte vallen */
+}
+
+canvas.glowing {
+    /* Basis gloei-effect, dit wordt geactiveerd als de canvas de 'glowing' class krijgt */
+    filter: drop-shadow(0 0 50px rgba(255, 255, 255, 1)); /* Fellere, bredere witte gloed */
+    transition: filter 0.1s ease-out; /* Iets langere, vloeiendere transitie */
 }
 
 #controlsContainer {
@@ -104,6 +101,10 @@ canvas {
 
 #controlsContainer.hidden {
     display: none;
+}
+
+button {
+    font-size: clamp(0.9rem, 1vw + 0.2rem, 1.1rem);
 }
 
 .controls-group {
@@ -135,6 +136,8 @@ canvas {
     align-items: center; /* Centreer label en input verticaal t.o.v. elkaar */
     gap: 10px; /* Ruimte tussen label en input */
     margin-bottom: 0.5rem;
+    flex-grow: 1; /* Laat de slider-row de resterende ruimte vullen */
+    font-size: 1rem; /* Dynamische font-size */
 }
 
 /* Aanpassingen voor de input elementen binnen de slider-row */
@@ -180,14 +183,14 @@ canvas {
 .controls-group span {
     font-weight: normal;
     color: #777;
-    /* font-size: 0.9em; */
+    font-size: 0.9em;
     margin-bottom: 0; /* Geen marge hier */
     /* text-align: left; <--- Optioneel, als je het links wilt uitlijnen */
 }
 
 .controls-group button {
-    background-color: #d3e3fd;
-    color: #0851bb;
+    background-color: #3498db;
+    color: #fff;
     padding: 8px 15px;
     border: none;
     border-radius: 4px;
@@ -200,6 +203,23 @@ canvas {
 .controls-group button:hover {
     background-color: #2980b9;
     color: white;
+}
+
+.color-picker-group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* Laat kleurkiezers op meerdere regels staan indien nodig */
+    gap: 10px; /* Ruimte tussen de kleurkiezer en de label */
+}
+
+.flex-row {
+    flex-direction: row; /* Zorgt ervoor dat de elementen in een rij staan */
+    align-items: center; /* Centreert items verticaal */
+    flex-wrap: wrap; /* Voorkomt dat items naar een nieuwe regel gaan */
+}
+
+.slider-row {
+    flex: auto; /* Laat de slider de resterende ruimte vullen */
 }
 
 .app-buttons {
@@ -222,6 +242,14 @@ canvas {
 .app-buttons button:hover {
     background-color: black;
 }
+
+.app-button-link {
+    color: white;
+    text-decoration: none;
+    display: block; /* Zorgt ervoor dat de link de volledige knop bedekt */
+    width: 100%; /* Volledige breedte van de knop */
+}
+
 
 
 /* --- Media Queries for Mobile --- */
