@@ -1,5 +1,3 @@
-// ballColorModule.js
-
 // Functie om de RGB-componenten van een hex-kleurstring te converteren naar een object
 function hexToRgb(hex) {
     const r = parseInt(hex.substring(1, 3), 16);
@@ -29,7 +27,7 @@ let onColorChangeCallback = null;
  * @param {number} initialTempoBPM - The initial tempo in BPM.
  * @param {string[]} initialFingerColors - An array with hex color strings for each finger.
  */
-export function initializeBallColorLogic(initialNumFingers, initialTempoBPM, initialFingerColors) {
+function initializeBallColorLogic(initialNumFingers, initialTempoBPM, initialFingerColors) {
     // Set the starting finger randomly, based on the number of fingers
     currentFingerIndex = Math.floor(Math.random() * initialNumFingers);
     // Calculate the beat interval based on the initial tempo
@@ -43,7 +41,7 @@ export function initializeBallColorLogic(initialNumFingers, initialTempoBPM, ini
  * Updates the tempo for the color change.
  * @param {number} newTempoBPM - The new tempo in BPM.
  */
-export function updateColorTempo(newTempoBPM) {
+function updateColorTempo(newTempoBPM) {
     const oldBeatIntervalMs = currentBeatIntervalMs;
     currentBeatIntervalMs = 60000 / newTempoBPM;
 
@@ -60,7 +58,7 @@ export function updateColorTempo(newTempoBPM) {
  * Updates the internal finger colors array.
  * @param {string[]} newColors - The new array of hex color strings.
  */
-export function updateFingerColors(newColors) {
+function updateFingerColors(newColors) {
     internalFingerColors = newColors;
 }
 
@@ -72,7 +70,7 @@ export function updateFingerColors(newColors) {
  * @param {number} numFingers - The number of active fingers (1-4).
  * @returns {string} The calculated RGB color string.
  */
-export function getDirectBallColor(currentTime, numFingers) { // Removed fingerColors from args, use internalFingerColors
+function getDirectBallColor(currentTime, numFingers) {
     // Ensure numFingers is valid, otherwise use a fallback
     if (numFingers < 1 || numFingers > 4 || !internalFingerColors || internalFingerColors.length === 0) {
         return '#e74c3c'; // Fallback to red ball
@@ -111,7 +109,7 @@ export function getDirectBallColor(currentTime, numFingers) { // Removed fingerC
  * Sets the callback function to be executed when the ball's color changes.
  * @param {function} callback - The function to call.
  */
-export function setOnColorChangeCallback(callback) {
+function setOnColorChangeCallback(callback) {
     onColorChangeCallback = callback;
 }
 
@@ -119,7 +117,7 @@ export function setOnColorChangeCallback(callback) {
  * Returns the current beat interval in milliseconds.
  * @returns {number} The current beat interval in milliseconds.
  */
-export function getCurrentBeatIntervalMs() {
+function getCurrentBeatIntervalMs() {
     return currentBeatIntervalMs;
 }
 
@@ -128,3 +126,13 @@ function calculateColorTempoMs(tempoBPM) {
     if (tempoBPM <= 0) return 60000; // Prevent division by zero or negative values
     return (60000 / tempoBPM); // Convert BPM to milliseconds per 'beat'/change
 }
+
+// Exporteer een object met alle functies
+export const ballColorModule = {
+    initializeBallColorLogic,
+    getDirectBallColor,
+    updateColorTempo,
+    setOnColorChangeCallback,
+    updateFingerColors,
+    getCurrentBeatIntervalMs
+};

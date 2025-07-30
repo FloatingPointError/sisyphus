@@ -12,7 +12,7 @@
     <div id="appContainer">
         <canvas id="animationCanvas" width="1000" height="300"></canvas>
 
-        <div id="controlsContainer" class="visible">
+        <div id="controlsContainer" class="hidden">
             <div class="controls-group flex-row">
                 <button id="startButton">Start Vlakke Lijn</button>
                 <button id="generateMountainsButton">Genereer & Start Hellingen</button>
@@ -78,14 +78,21 @@
         </div>
 
         <div class="app-buttons">
-            <button id="toggleControlsButton">Verberg knoppen</button>
-            <button id="fullscreenButton">Volledig scherm</button>
+            <button id="toggleControlsButton">Instellingen & Herstarten</button>
             <button>
-                <a href="uitleg.html" class="app-button-link">Lees de uitleg</a></div>
+                <a href="uitleg.html" class="app-button-link">Lees de uitleg</a>
             </button>
-            
+            <button id="fullscreenButton" style="visibility: collapse;">Volledig scherm</button>
+        </div>
+
+        <div id="lessonPathContainer">
+            <h2>Leerpad</h2>
+            <div class="lesson-buttons">
+                <!-- Knoppen worden hier dynamisch toegevoegd door JavaScript -->
+            </div>
         </div>
     </div>
+</div>
     
     <script type="module" src="app/app.js"></script>
 </body>

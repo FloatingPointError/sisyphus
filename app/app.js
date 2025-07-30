@@ -1,9 +1,13 @@
-// script.js
-import { initializeBallColorLogic, getDirectBallColor, updateColorTempo, setOnColorChangeCallback, updateFingerColors, getCurrentBeatIntervalMs } from './elements/ballColorModule.js';
-import { domElements } from './elements/index.js';
+// app.js
+
+import { ballColorModule } from './elements/ballColorModule.js';
+import { getDomElements } from './elements/index.js';
 import { drawSkyElements } from './elements/skyElements.js';
+import { initLessonManager } from './elements/lessonManager.js'; // NIEUW: Importeer de les manager
 
 document.addEventListener('DOMContentLoaded', () => {
+    const domElements = getDomElements();
+
     const {
         appContainer,
         canvas,
@@ -22,12 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
         currentNumFingersSpan,
         fingerColorInputs,
         colorTempoSlider,
-        currentColorTempoSpan
-        // hideExplainerText and explainerText are removed as they are now on a separate page
+        currentColorTempoSpan,
+        lessonPathContainer // Zorg dat deze ook gedeclareerd is
     } = domElements;
     const ctx = canvas.getContext('2d');
 
-    // Canvas ratio bewaren voor proportioneel schalen
     const DEFAULT_CANVAS_WIDTH = 1000;
     const DEFAULT_CANVAS_HEIGHT = 400;
     const CANVAS_ASPECT_RATIO = DEFAULT_CANVAS_WIDTH / DEFAULT_CANVAS_HEIGHT;
@@ -40,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const BALL_RADIUS_PERCENTAGE = 0.05;
-    const PULSE_MAGNITUDE = 0.20; // Hoeveel de bal groter wordt (15% van de radius)
+    const PULSE_MAGNITUDE = 0.15;
     let ballRadius;
     
     function calculateBallRadius() {
@@ -58,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineWidth = 2;
     const lineColor = '#2c3e50';
 
+    // flatPath moet buiten de functie worden gedeclareerd als het door andere modules wordt gebruikt
     let flatPath = {
         points: [{ x: 0, y: canvasHeight / 2 }, { x: canvasWidth, y: canvasHeight / 2 }],
         curves: []
@@ -181,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function draw() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-        // Teken de lucht elementen via de module
         drawSkyElements(ctx, canvasWidth, canvasHeight);
 
         if (currentPathData && currentPathData.curves && currentPathData.curves.length > 0) {
@@ -205,21 +208,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!isCountingDown) {
             const numFingers = parseInt(numFingersSlider.value);
-            const ballColor = getDirectBallColor(performance.now(), numFingers); 
+            const ballColor = ballColorModule.getDirectBallColor(performance.now(), numFingers); 
 
-            // NIEUW: Puls effect berekening
-            const pulseTempoMs = getCurrentBeatIntervalMs();
+            const pulseTempoMs = ballColorModule.getCurrentBeatIntervalMs();
             const currentTime = performance.now();
-            const pulseTime = currentTime % pulseTempoMs; // Tijd binnen de huidige puls cyclus
-            // Math.sin oscilleert tussen -1 en 1. We mappen het naar 0 en 1.
+            const pulseTime = currentTime % pulseTempoMs;
             const pulseProgress = (Math.sin((pulseTime / pulseTempoMs) * Math.PI * 2) + 1) / 2; 
             
-            // Bereken de geschaalde balradius
-            // De bal schaalt van ballRadius (wanneer pulseProgress is 0) tot ballRadius * (1 + PULSE_MAGNITUDE) (wanneer pulseProgress is 1)
             const scaledBallRadius = ballRadius * (1 + (PULSE_MAGNITUDE * pulseProgress)); 
 
             ctx.beginPath();
-            ctx.arc(ballX, ballY, scaledBallRadius, 0, Math.PI * 2); // Gebruik de geschaalde radius
+            ctx.arc(ballX, ballY, scaledBallRadius, 0, Math.PI * 2);
             ctx.fillStyle = ballColor;
             ctx.fill();
             ctx.strokeStyle = 'black';
@@ -239,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function update() {
         ballX += ballSpeed;
 
-        if (ballX > canvasWidth + ballRadius) { // Let op: hier nog de basis ballRadius gebruiken voor de grenscheck
+        if (ballX > canvasWidth + ballRadius) {
             ballX = -ballRadius;
         }
 
@@ -260,10 +259,10 @@ document.addEventListener('DOMContentLoaded', () => {
         animationId = null;
         currentPathData = pathData;
         
-        initializeBallColorLogic(
+        ballColorModule.initializeBallColorLogic(
             parseInt(numFingersSlider.value),
             parseInt(colorTempoSlider.value),
-            fingerColorInputs.map(input => input.value) // Pass initial colors here
+            fingerColorInputs.map(input => input.value)
         );
 
         resetBall();
@@ -301,10 +300,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ballY = getYForX(ballX, currentPathData); 
         
         draw();
-        initializeBallColorLogic(
+        ballColorModule.initializeBallColorLogic(
             parseInt(numFingersSlider.value),
             parseInt(colorTempoSlider.value),
-            fingerColorInputs.map(input => input.value) // Pass initial colors here
+            fingerColorInputs.map(input => input.value)
         );
     }
 
@@ -313,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
         generateMountainsButton.textContent = "Herstart Hellingen";
     }
 
-    // --- Event Listeners voor de knoppen en sliders ---
     startButton.addEventListener('click', () => {
         initializeFlatPathCurves(); 
         startAnimationOrCountdown(flatPath);
@@ -345,21 +343,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     numFingersSlider.addEventListener('input', () => {
         currentNumFingersSpan.textContent = numFingersSlider.value;
-        initializeBallColorLogic(
+        ballColorModule.initializeBallColorLogic(
             parseInt(numFingersSlider.value),
             parseInt(colorTempoSlider.value),
-            fingerColorInputs.map(input => input.value) // Pass initial colors here
+            fingerColorInputs.map(input => input.value)
         );
         if (!isCountingDown && animationId) {
             draw();
         }
     });
 
-    // NEW: Event listener for color inputs to update colors in the module
     fingerColorInputs.forEach(input => {
         input.addEventListener('input', () => {
             const newColors = fingerColorInputs.map(input => input.value);
-            updateFingerColors(newColors); // Update the colors in the module
+            ballColorModule.updateFingerColors(newColors);
             if (!isCountingDown && animationId) {
                 draw();
             }
@@ -369,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
     colorTempoSlider.addEventListener('input', () => {
         const newTempo = parseInt(colorTempoSlider.value);
         currentColorTempoSpan.textContent = newTempo + ' BPM';
-        updateColorTempo(newTempo);
+        ballColorModule.updateColorTempo(newTempo);
         if (!isCountingDown && animationId) {
             draw();
         }
@@ -441,7 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('resize', adjustCanvasSizeAndPath);
     
-    // --- INITIALISATIE BIJ HET LADEN VAN DE PAGINA ---
     adjustCanvasSizeAndPath(); 
     
     currentSpeedSpan.textContent = speedSlider.value + 'x';
@@ -449,22 +445,29 @@ document.addEventListener('DOMContentLoaded', () => {
     currentColorTempoSpan.textContent = colorTempoSlider.value + ' BPM';
     currentNumFingersSpan.textContent = numFingersSlider.value;
 
-    // Set the glow effect callback (this remains separate from the pulse)
-    setOnColorChangeCallback(triggerGlowEffect);
+    ballColorModule.setOnColorChangeCallback(triggerGlowEffect);
 
-    initializeBallColorLogic(
+    ballColorModule.initializeBallColorLogic(
         parseInt(numFingersSlider.value),
         parseInt(colorTempoSlider.value),
-        fingerColorInputs.map(input => input.value) // Pass initial colors here
+        fingerColorInputs.map(input => input.value)
     );
 
     draw();
 
-    // Function to trigger the glow effect (this remains separate from the pulse)
     function triggerGlowEffect() {
         canvas.classList.add('glowing');
         setTimeout(() => {
             canvas.classList.remove('glowing');
-        }, 400); // Glow duration in milliseconds
+        }, 400);
     }
+
+    // NIEUW: Initialiseer de les manager
+    initLessonManager(domElements, {
+        initializeFlatPathCurves,
+        generateMountainPath,
+        startAnimationOrCountdown,
+        ballColorModule,
+        flatPath // flatPath moet ook worden doorgegeven
+    });
 });

@@ -81,8 +81,8 @@ canvas {
 
 canvas.glowing {
     /* Basis gloei-effect, dit wordt geactiveerd als de canvas de 'glowing' class krijgt */
-    filter: drop-shadow(0 0 50px rgba(255, 255, 255, 1)); /* Fellere, bredere witte gloed */
-    transition: filter 0.4s ease-out; /* Iets langere, vloeiendere transitie */
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)); /* Fellere, bredere witte gloed */
+    transition: filter 0.2s ease-out; /* Iets langere, vloeiendere transitie */
 }
 
 #controlsContainer {
@@ -249,6 +249,47 @@ button {
     width: 100%; /* Volledige breedte van de knop */
 }
 
+/* Styling voor het leerpad */
+#lessonPathContainer {
+    margin-top: 4rem;
+    background-color: #fff;
+    width: 90%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+#lessonPathContainer h2 {
+    color: #2c3e50;
+    padding-left: 0.3rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+#lessonPathContainer .lesson-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content:start;
+}
+
+#lessonPathContainer .lesson-buttons button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    flex: 1 1 auto; /* Flexibel in breedte */
+    min-width: 120px; /* Minimale breedte voor knoppen */
+}
+
+#lessonPathContainer .lesson-buttons button:hover {
+    background-color: #2980b9;
+}
 
 
 /* --- Media Queries for Mobile --- */
@@ -305,13 +346,13 @@ button {
         min-width: unset;
     }
 
-    .explainer {
-        padding: 10px 15px; /* Minder padding op mobiel */
-        margin-bottom: 10px;
+    #lessonPathContainer {
+        width: 95%;
+        padding: 15px;
     }
 
-    #hideExplainerText {
-        text-align: center; /* Centreer de link op mobiel */
+    #lessonPathContainer .lesson-buttons button {
+        min-width: unset;
     }
 }
 
