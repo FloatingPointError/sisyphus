@@ -45,9 +45,8 @@ function update(state, functions) {
  * @param {object} functions Externe functies om aan te roepen.
  */
 export function draw(state, functions) {
-    // isCountingDown en countdownValue komen nu direct uit state
     const { ctx, currentPathData, ballX, ballY, ballRadius, isCountingDown, countdownValue } = state;
-    const { numFingersSlider, fingerColorInputs } = state.domElements; 
+    const { numFingersSlider } = state.domElements; 
     const { ballColorModule } = functions;
 
     ctx.clearRect(0, 0, state.canvasWidth, state.canvasHeight);
@@ -63,7 +62,17 @@ export function draw(state, functions) {
         ctx.lineTo(state.canvasWidth, state.canvasHeight);
         ctx.lineTo(0, state.canvasHeight);
         ctx.closePath();
-        ctx.fillStyle = '#E0E0E0';
+        
+        // NIEUW: Maak een lineaire gradiënt voor de bergen
+        const mountainGradient = ctx.createLinearGradient(0, state.canvasHeight, 0, 0);
+        // mountainGradient.addColorStop(1, '#195e77');    // Donkerste tint aan de basis van het canvas
+        // mountainGradient.addColorStop(0.4, '#2a6a77');   // Overgang naar een iets lichtere tint
+        //mountainGradient.addColorStop(0.6, '#3b7a87');   // Midden-tint voor het hoofdgedeelte van de berg
+        // mountainGradient.addColorStop(0.75, '#5d9aa7');  // Lichtere tint richting de toppen
+        // mountainGradient.addColorStop(0.2, '#aeaeaeff');   // Nog lichtere tint, bijna bij de sneeuwgrens
+        mountainGradient.addColorStop(1, '#FFFFFF');     // Wit voor de sneeuw op de allerhoogste toppen
+
+        ctx.fillStyle = mountainGradient; // Stel de vulstijl in op de gradiënt
         ctx.fill();
 
         ctx.beginPath();
@@ -76,13 +85,14 @@ export function draw(state, functions) {
         ctx.stroke();
 
     } else {
+        // Voor de vlakke lijn (behoudt de effen kleur)
         ctx.beginPath();
         ctx.moveTo(0, state.canvasHeight / 2);
         ctx.lineTo(state.canvasWidth, state.canvasHeight / 2);
         ctx.lineTo(state.canvasWidth, state.canvasHeight);
         ctx.lineTo(0, state.canvasHeight);
         ctx.closePath();
-        ctx.fillStyle = '#E0E0E0';
+        ctx.fillStyle = '#E0E0E0'; // Effen lichtgrijze vulling voor de vlakke lijn
         ctx.fill();
 
         ctx.beginPath();
@@ -190,4 +200,8 @@ export function resetBall(state, functions) {
  */
 export function calculateBallRadius(state) {
     state.ballRadius = Math.min(state.canvasWidth, state.canvasHeight) * BALL_RADIUS_PERCENTAGE;
+    
+    // Voeg hier een waarde toe om de bal naar rechts te verschuiven
+    const offsetX = 50; // Bijvoorbeeld 50 pixels naar rechts
+    state.ballX = state.ballRadius + offsetX; 
 }

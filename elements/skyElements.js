@@ -29,7 +29,7 @@ export function drawSkyElements(ctx, canvasWidth, canvasHeight) {
     const sunRadius = Math.min(canvasWidth, canvasHeight) * 0.1; // 10% van de kleinste dimensie
     const sunX = canvasWidth - sunRadius - 20; // 20px van de rechterrand
     const sunY = sunRadius + 20; // 20px van de bovenrand
-    const sunColor = '#FFD700'; // Goudgele kleur
+    const sunColor = '#ffe064'; // Goudgele kleur
 
     ctx.beginPath();
     ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);

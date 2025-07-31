@@ -73,7 +73,7 @@ function updateFingerColors(newColors) {
 function getDirectBallColor(currentTime, numFingers) {
     // Ensure numFingers is valid, otherwise use a fallback
     if (numFingers < 1 || numFingers > 4 || !internalFingerColors || internalFingerColors.length === 0) {
-        return '#e74c3c'; // Fallback to red ball
+        return '#f05442ff'; // Fallback
     }
 
     if (numFingers === 1) { // If there's only 1 finger, always show that color

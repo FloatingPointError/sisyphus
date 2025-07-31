@@ -99,8 +99,8 @@ canvas.glowing {
     margin-top: 20px;
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #f8f8f8;
-    border-radius: 5px;
+    /* background-color: #f8f8f8; */
+    /* border-radius: 5px; */
     box-sizing: border-box;
     /* Gebruik max-height voor een soepele overgang bij verbergen/tonen */
     max-height: 500px; /* Voldoende hoogte voor de uitgeklapte staat */
@@ -110,7 +110,9 @@ canvas.glowing {
                 margin-top 0.5s ease-in-out, margin-bottom 0.5s ease-in-out,
                 padding 0.5s ease-in-out, border-width 0.5s ease-in-out;
     opacity: 1;
-    border: 1px solid #ddd; /* Zorg dat de border hier staat om te kunnen overgaan */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 #controlsContainer.hidden {
@@ -249,7 +251,7 @@ button {
 }
 
 .app-buttons button {
-    background-color: #31363b;
+    background-color: #40454c;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -270,6 +272,17 @@ button {
 }
 
 /* Styling voor het leerpad */
+.learning-path-explainer {
+    margin-top: 2rem;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px; /* Maximale breedte voor leesbaarheid */
+    width: 100%; /* Zorgt ervoor dat het zich aanpast aan kleinere schermen */
+    box-sizing: border-box; /* Padding en border vallen binnen de breedte */
+}
+
 #lessonPathContainer {
     margin-top: 4rem;
     background-color: #fff;
@@ -277,6 +290,9 @@ button {
     max-width: 1200px;
     box-sizing: border-box;
     text-align: left;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 #lessonPathContainer h2 {
@@ -302,7 +318,6 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    font-weight: bold;
     flex: 1 1 auto; /* Flexibel in breedte */
     min-width: 120px; /* Minimale breedte voor knoppen */
 }

@@ -90,4 +90,19 @@ export function initLessonManager(domElements, coreAppFunctions) {
         button.addEventListener('click', () => loadLesson(lesson.id));
         lessonButtonsContainer.appendChild(button);
     });
+
+    // Voeg een uitleg toe voor de leerpad
+    const explainer = lessonPathContainer.querySelector('.learning-path-explainer');
+    // Dynamisch de uitleg toevoegen aan de hand van de huidige les. Bevindt zich in de description van de les.
+    explainer.textContent = lessonConfigurations[0].settings.description; // Start met de eerste les uitleg
+    lessonButtonsContainer.addEventListener('click', (event) => {
+        if (event.target.tagName === 'BUTTON') {
+            const lessonId = event.target.dataset.lessonId;
+            const lesson = lessonConfigurations.find(l => l.id === lessonId);
+            if (lesson) {
+                explainer.textContent = lesson.settings.description; // Update de uitleg
+            }
+        }
+    });
+
 }
