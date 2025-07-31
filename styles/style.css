@@ -3,13 +3,14 @@
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column; /* AANGEPAST: Zorgt ervoor dat margin: auto verticaal werkt */
+    justify-content: flex-start; /* AANGEPAST: Verwijdert de automatische verticale centrering van flexbox */
+    align-items: center; /* Behoudt horizontale centrering van appContainer */
     min-height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
-    color: #333;
-    /* overflow: hidden; Voorkom onnodige scrollbalken op de body */
+    overflow-y: scroll; /* NIEUW: Zorgt ervoor dat de verticale scrollbalk altijd zichtbaar is */
+    /* background-color: #f0f0f0; */
+    /* color: #333; */
 }
 
 h1 {
@@ -30,18 +31,23 @@ p {
 }
 
 #appContainer {
-    display: flex; /* Maak de container een flex container */
-    flex-direction: column; /* Stapel items verticaal */
-    align-items: normal; /* Centreer items horizontaal */
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
     padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* background-color: #fff;
+    border-radius: 8鸣;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
     width: 90%; /* Een beetje minder breedte om marge te geven */
     max-width: 1200px; /* Maximale breedte voor grote schermen */
     box-sizing: border-box; /* Zorg dat padding en border in de breedte vallen */
     height: auto; /* Laat de hoogte zich aanpassen aan de inhoud */
     overflow: hidden; /* Voorkom overflow problemen binnen de container zelf */
+        /* AANGEPAST: margin-top om positie vanaf boven te fixeren, margin-bottom om ruimte te geven */
+    margin-top: 20px; 
+    margin-bottom: 20px; 
+    margin-left: auto; /* Behoudt horizontale centrering */
+    margin-right: auto; /* Behoudt horizontale centrering */
 }
 
 #appContainer.fullscreen {
@@ -96,10 +102,24 @@ canvas.glowing {
     background-color: #f8f8f8;
     border-radius: 5px;
     box-sizing: border-box;
+    /* Gebruik max-height voor een soepele overgang bij verbergen/tonen */
+    max-height: 500px; /* Voldoende hoogte voor de uitgeklapte staat */
+    overflow: hidden; /* Verberg inhoud die buiten max-height valt */
+    /* AANGEPAST: Alle eigenschappen die ruimte innemen moeten overgaan */
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, 
+                margin-top 0.5s ease-in-out, margin-bottom 0.5s ease-in-out,
+                padding 0.5s ease-in-out, border-width 0.5s ease-in-out;
+    opacity: 1;
+    border: 1px solid #ddd; /* Zorg dat de border hier staat om te kunnen overgaan */
 }
 
 #controlsContainer.hidden {
-    display: none;
+    max-height: 0; /* Verberg door hoogte naar nul te zetten */
+    opacity: 0; /* Maak onzichtbaar */
+    margin-top: 0; /* Deze nu actief en overgang */
+    margin-bottom: 0; /* Deze nu actief en overgang */
+    padding: 0; /* Collapses padding */
+    border-width: 0; /* Collapses border */
 }
 
 button {
@@ -315,6 +335,8 @@ button {
     }
 
     #controlsContainer {
+        flex-direction: column; /* AANGEPAST: Stapel groepen verticaal op mobiel */
+        gap: 10px;
         padding: 10px;
         width: 100%; /* Volledige breedte van appContainer */
         box-sizing: border-box; /* Zorg dat padding en border in de breedte vallen */
