@@ -23,18 +23,29 @@ body {
     box-sizing: border-box; /* Padding en border vallen binnen de breedte */
 }
 
-.uitleg-container h1 {
+.uitleg-container h2 {
     color: #2c3e50;
     margin-top: 0;
     margin-bottom: 25px;
-    text-align: center;
-    font-size: clamp(1.8rem, 4vw, 2.5rem); /* Responsieve titel */
+    text-align: left;
+    font-size: clamp(1.5rem, 2.5vw, 2rem); /* Responsieve titel */
 }
 
 .uitleg-container p {
     margin-bottom: 15px;
     font-size: clamp(1rem, 1.2vw, 1.1rem); /* Responsieve paragraaftekst */
     line-height: 1.7;
+}
+
+.uitleg-container ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.uitleg-container ul li {
+    margin-bottom: 10px;
+    font-size: clamp(0.9rem, 1vw, 1rem); /* Responsieve lijsttekst */
 }
 
 .terug-link {

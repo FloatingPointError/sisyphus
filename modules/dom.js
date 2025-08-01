@@ -84,15 +84,15 @@ export function setupEventListeners(domElements, state, functions) {
         }
     });
 
-    fullscreenButton.addEventListener('click', () => {
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-        } else {
-            appContainer.requestFullscreen().catch(err => {
-                alert(`Error at fullscreen: ${err.message} (make sure the browser alows this)`);
-            });
-        }
-    });
+    // fullscreenButton.addEventListener('click', () => {
+    //     if (document.fullscreenElement) {
+    //         document.exitFullscreen();
+    //     } else {
+    //         appContainer.requestFullscreen().catch(err => {
+    //             alert(`Error at fullscreen: ${err.message} (make sure the browser alows this)`);
+    //         });
+    //     }
+    // });
 
     document.addEventListener('fullscreenchange', () => {
         appContainer.classList.toggle('fullscreen', document.fullscreenElement);

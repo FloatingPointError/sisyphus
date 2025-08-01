@@ -154,9 +154,10 @@ export function initLessonManager(domElements, coreAppFunctions) {
 
             // De link creëren en eventlisteners toevoegen
             const link = document.createElement('a');
-            link.href = `oefeningen/${lesson.id}.html`; // Verwijst naar de les pagina
-            link.textContent = lesson.name;
-            link.target = '_a'; // Open in een nieuw tabblad (maar steeds dezelfde tab)
+            link.href = `oefeningen/${lesson.id}.html#${lesson.subid.replace(/\s+/g, '-')}`; // Link naar de les pagina met anker
+            link.textContent = 'Read instructions'; // Aangepaste tekst voor de link
+            link.target = '_a'; // Open in een nieuw tabblad
+            link.classList.add('lesson-explanation-link'); // Zorg dat de CSS klasse wordt toegepast
             divWrapper.appendChild(link);
         });
     }

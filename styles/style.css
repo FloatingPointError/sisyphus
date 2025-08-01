@@ -9,8 +9,8 @@ body {
     min-height: 100vh;
     margin: 0;
     overflow-y: scroll; /* NIEUW: Zorgt ervoor dat de verticale scrollbalk altijd zichtbaar is */
-    /* background-color: #f0f0f0; */
-    /* color: #333; */
+    padding-top: 65px; /* gelijke hoogte als de menubar */
+    color: #2c3e50; /* Donkerblauwe tekstkleur */
 }
 
 h1 {
@@ -44,8 +44,8 @@ p {
     height: auto; /* Laat de hoogte zich aanpassen aan de inhoud */
     overflow: hidden; /* Voorkom overflow problemen binnen de container zelf */
         /* AANGEPAST: margin-top om positie vanaf boven te fixeren, margin-bottom om ruimte te geven */
-    margin-top: 20px; 
-    margin-bottom: 20px; 
+    margin-top: 5rem; 
+    margin-bottom: 5rem; 
     margin-left: auto; /* Behoudt horizontale centrering */
     margin-right: auto; /* Behoudt horizontale centrering */
 }
@@ -83,6 +83,7 @@ canvas {
     flex-shrink: 0;
     max-width: 100%;
     height: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 canvas.glowing {
@@ -135,17 +136,18 @@ button {
     justify-content: flex-start; /* Items bovenaan uitlijnen */
     gap: 8px; /* Algemene ruimte tussen de elementen in de groep */
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #2c3e50;
     border-radius: 5px;
     background-color: #fff;
     flex: 1;
     min-width: 250px;
     max-height: fit-content; /* Laat de hoogte zich aanpassen aan de inhoud */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .controls-group label {
     /* font-weight: bold; */
-    color: #555;
+    color: #2c3e50;
     /* margin-bottom: 0; <--- Deze kan nu weg, de gap in slider-row regelt het */
     flex-shrink: 0;
     white-space: nowrap;
@@ -159,11 +161,12 @@ button {
     margin-bottom: 0.5rem;
     flex-grow: 1; /* Laat de slider-row de resterende ruimte vullen */
     font-size: 1rem; /* Dynamische font-size */
+    color: #2c3e50; /* Donkerblauwe tekstkleur */
 }
 
 /* Aanpassingen voor de input elementen binnen de slider-row */
-.controls-group .slider-row input[type="range"],
-.controls-group .slider-row input[type="color"] {
+.controls-group input[type="range"],
+.controls-group input[type="color"] {
     margin-bottom: 0; /* Geen marge hier */
     flex-grow: 1; /* Laat de input de resterende ruimte vullen */
 }
@@ -210,13 +213,14 @@ button {
 }
 
 .controls-group button {
-    background-color: #3498db;
-    color: #fff;
+    background-color: #FFFFFF;
+    color: #2c3e50;
     padding: 8px 15px;
-    border: none;
+    border: 2px solid #2c3e50; /* Zelfde kleur als achtergrond */
+    font-size: 1rem; /* Dynamische font-size */
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.7s ease;
     width: 100%;
     margin-top: auto; /* Duwt de knop naar de onderkant */
 }
@@ -224,11 +228,19 @@ button {
 .controls-group button:hover {
     background-color: #2980b9;
     color: white;
+    transition: background-color ease 0.7s;
+}
+
+.control-icon .icon {
+    width: 24px; /* Size of the SVG icon */
+    height: 24px;
+    display: block;
 }
 
 /* Specific setting for the controls group reset button */
 #resetButton {
     background-color: #f05442;
+    color: white;
 }
 
 #resetButton:hover {
@@ -260,17 +272,34 @@ button {
 }
 
 .app-buttons button {
-    background-color: #40454c;
-    color: white;
+    background-color: #FFFFFF; /* Witte achtergrond */
+    color: #2c3e50; /* Donkerblauwe tekstkleur */
+    font-size: 1rem; /* Dynamische font-size */
     padding: 10px 20px;
-    border: none;
+    border: 2px solid #2c3e50; /* Zelfde kleur als achtergrond */
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .app-buttons button:hover {
-    background-color: black;
+    background-color: #FFFFFF; /* Donkerder blauw bij hover */
+    
+}
+
+.app-buttons .control-icon {
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.app-buttons .control-icon .icon {
+    width: 2.5rem; /* Icoon grootte */
+    height: 2.5rem; /* Icoon grootte */
+    /* Border is round */
+}
+
+.app-buttons .control-icon:hover {
+    background-color: #FFFFFF; /* Lichte achtergrond bij hover */
 }
 
 .app-button-link {
@@ -281,32 +310,21 @@ button {
 }
 
 .learning-paths {
-    margin-top: 5rem;
-}
-
-/* Styling voor het leerpad */
-.learning-path-explainer {
-    margin-top: 2rem;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 800px; /* Maximale breedte voor leesbaarheid */
-    width: 100%; /* Zorgt ervoor dat het zich aanpast aan kleinere schermen */
-    box-sizing: border-box; /* Padding en border vallen binnen de breedte */
+    margin-top: 8rem;
+    color: #2c3e50; /* Donkerblauwe tekstkleur */;
 }
 
 #lessonPathContainer {
-    margin-top: 4rem;
+    margin-top: 2rem;
     background-color: #fff;
     max-width: 1200px;
     box-sizing: border-box;
+    border: 2px solid #2c3e50; /* Zelfde kleur als achtergrond */
     text-align: left;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-    /* NIEUW: Maak lessonPathContainer een flex container voor de kolommen */
     display: flex;
     flex-direction: row; /* Knoppen en links naast elkaar */
     flex-wrap: wrap; /* Laat de kolommen wrappen op kleine schermen */
@@ -331,54 +349,136 @@ button {
 }
 
 #lessonPathContainer button {
-    background-color: #3498db;
-    color: white;
+    background-color: #FFFFFF;
+    color: #2c3e50; /* Donkerblauwe tekstkleur */
+    font-size: 1rem;
     padding: 10px 15px;
-    border: none;
+    border: 2px solid #2c3e50; /* Zelfde kleur als achtergrond */
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    min-width: 20%;
+    min-width: 15%;
     margin-right: 0;
     font-size: 0.95em;
+    transition: background-color ease 0.7s;
 }
 
-#lessonPathContainer button button:hover {
+#lessonPathContainer button:hover {
     background-color: #2980b9;
+    color: white;
+    transition: background-color ease 0.7s;
 }
 
 #lessonPathContainer a {
     font-size: 0.95em;
-    color: #3498db; /* Linkkleur */
+    color: #2c3e50; /* Linkkleur */
     text-decoration: none;
     padding: 10px 15px; /* Padding voor klikbaarheid */
     display: block; /* Zorgt ervoor dat padding en breedte werken */
-    width: 100%; /* Links vullen de breedte van hun container */
+    /* width: 100%; Links vullen de breedte van hun container */
     box-sizing: border-box;
 }
 
-#lessonPathContainer .lesson-links a:hover {
+#lessonPathContainer a:hover {
     text-decoration: underline;
+}
+
+#parentLessonButtons {
+    background-color: #FFFFFF;
+    border: 2px solid #2c3e50;
+    color: #2c3e50;
+    max-width: 1200px;
+    box-sizing: border-box;
+    text-align: left;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0; /* Geen marge onder de knoppen */
+    display: flex;
+    flex-direction: row; /* Knoppen naast elkaar */
+    flex-wrap: wrap; /* Laat de knoppen wrappen op kleine schermen */
+    gap: 20px; /* Ruimte tussen de knoppen */
 }
 
 #parentLessonButtons button{
     justify-content: center;
     gap: 15px;
-    background-color: #3498db;
-    color: white;
+    background-color: #FFFFFF;
+    color: #2c3e50;
     padding: 10px 15px;
-    border: none;
+    border: 2px solid #2c3e50; /* Zelfde kleur als achtergrond */
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     min-width: 20%;
     /* margin-right: 0; */
-    margin: 4px 4px;
+    margin: 4px 2px;
     font-size: 0.95em;
+    transition: background-color ease 0.7s;
 }
 
-#parentLessonButtons button button:hover {
+#parentLessonButtons button:hover {
     background-color: #2980b9;
+    color: white; /* Witte tekst bij hover */
+    transition: background-color ease 0.7s;
+
+}
+
+.menubar {
+    position: fixed; /* Blijft bovenaan het scherm staan */
+    top: 0; /* Plaatst het bovenaan */
+    width: 100%; /* Volledige breedte */
+    color: #2c3e50; /* Donkerblauwe tekstkleur */
+    background-color: rgba(255, 255, 255, 0.7); /* Witte achtergrond met 70% opaciteit */
+    backdrop-filter: blur(10px); /* Het 'glazen' effect: vervaagt de inhoud eronder */
+    -webkit-backdrop-filter: blur(10px); /* Voor Safari ondersteuning */
+    z-index: 1000; /* Zorgt ervoor dat de menubar boven andere content blijft */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Een subtiele schaduw */
+    padding: 15px 20px; /* Ruimte binnen de menubar */
+    box-sizing: border-box; /* Zorgt dat padding in de breedte valt */
+    font-family: Arial, sans-serif;
+}
+
+.menubar-content {
+    display: flex;
+    justify-content: space-between; /* Verdeelt items naar de uiteinden */
+    align-items: center; /* Centreert items verticaal */
+    max-width: 1200px; /* Maximale breedte van de content */
+    margin: 0 auto; /* Centreert de content binnen de menubar */
+}
+
+.menubar-brand {
+    font-weight: bold;
+    font-size: 1.5em;
+    color: #2c3e50; /* Donkerdere tekstkleur */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.menubar-brand:hover {
+    color: #3498db; /* Lichtere kleur bij hover */
+}
+
+.menubar-links {
+    list-style: none; /* Verwijdert opsommingstekens */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 25px; /* Ruimte tussen de links */
+    color: #2c3e50; /* Donkerblauwe tekstkleur */
+    font-weight: bold; /* Maak de links vetgedrukt */
+}
+
+.menubar-links a {
+    color: #555; /* Grijze tekstkleur */
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.menubar-links a:hover {
+    color: #3498db; /* Lichtere kleur bij hover */
+    transform: translateY(-2px); /* Subtiel omhoog bewegen */
 }
 
 
@@ -445,6 +545,26 @@ button {
 
     #lessonPathContainer .lesson-buttons button {
         min-width: unset;
+    }
+
+    .menubar {
+        padding: 10px 15px; /* Minder padding op mobiel */
+    }
+
+    .menubar-brand {
+        font-size: 1.2em;
+    }
+
+    .menubar-links {
+        gap: 15px; /* Minder ruimte tussen links op mobiel */
+    }
+
+    .menubar-links a {
+        font-size: 1em;
+    }
+
+    body {
+        padding-top: 55px; /* Pas padding aan voor mobiele menubar hoogte */
     }
 }
 

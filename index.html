@@ -9,6 +9,16 @@
     <link rel="apple-touch-icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
+    <nav class="menubar">
+        <div class="menubar-content">
+            <a href="#" class="menubar-brand">Bass Ball</a>
+            <ul class="menubar-links">
+                <li><a href="uitleg.html" target="_a">General instructions</a></li>
+                <li><a href="#learningPathways">Learning Paths</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <div id="appContainer">
         <canvas id="animationCanvas" width="1000" height="300"></canvas>
 
@@ -78,15 +88,23 @@
         </div>
 
         <div class="app-buttons">
-            <button id="toggleControlsButton">Settings and restart</button>
-            <button>
-                <a href="uitleg.html" class="app-button-link">Read the instructions</a>
-            </button>
-            <button id="fullscreenButton" style="visibility: collapse;">Full screen</button>
+            <button id="toggleControlsButton">Show settings</button>
+                        <!-- NEW: Play/Pause and Stop Icons -->
+            <div class="playback-controls">
+                <button id="playPauseButton" class="control-icon">
+                    <!-- Play Icon -->
+                    <img src="play-button.svg" alt="Play" class="icon play-icon">
+                </button>
+                <button id="stopButton" class="control-icon">
+                    <!-- Stop Icon -->
+                    <img src="stop-button.svg" alt="Stop" class="icon stop-icon">
+                </button>
+            </div>
+            <!-- <button id="fullscreenButton" style="visibility: collapse;">Full screen</button> -->
         </div>
 
         
-        <div class="learning-paths">
+        <div class="learning-paths" id="learningPathways">
             <h3>Learning Paths</h3>
             <div id="parentLessonButtons">
                 <!-- knoppen voor de parentLessons -->
