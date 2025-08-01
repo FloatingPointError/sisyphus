@@ -38,7 +38,7 @@ export function initLessonManager(domElements, coreAppFunctions) {
      * @param {string} lessonId - De ID van de les die geladen moet worden.
      */
     function loadLesson(lessonId) {
-        const lesson = lessonConfigurations.find(l => l.id === lessonId);
+        const lesson = lessonConfigurations.find(l => l.subid === lessonId);
         if (!lesson) {
             console.error('Les niet gevonden:', lessonId);
             return;
@@ -86,8 +86,8 @@ export function initLessonManager(domElements, coreAppFunctions) {
     lessonConfigurations.forEach(lesson => {
         const button = document.createElement('button');
         button.textContent = lesson.name;
-        button.dataset.lessonId = lesson.id;
-        button.addEventListener('click', () => loadLesson(lesson.id));
+        button.dataset.lessonId = lesson.subid;
+        button.addEventListener('click', () => loadLesson(lesson.subid));
         lessonButtonsContainer.appendChild(button);
     });
 
@@ -104,5 +104,16 @@ export function initLessonManager(domElements, coreAppFunctions) {
             }
         }
     });
+
+    // Hier komen de links naar de html pagina met meer uitleg over de les. De postfix is de les ID.
+    const lessonLinksContainer = lessonPathContainer.querySelector('.lesson-links');
+    lessonConfigurations.forEach(lesson => {
+        const link = document.createElement('a');
+        link.href = `oefeningen/${lesson.id}.html`; // Verwijst naar de les pagina
+        link.textContent = lesson.name;
+        link.target = '_a'; // Open in een nieuw tabblad (maar steeds dezelfde tab)
+        lessonLinksContainer.appendChild(link);
+    });
+
 
 }

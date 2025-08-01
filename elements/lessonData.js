@@ -8,14 +8,15 @@ const hexColors = {
 }
 
 /**
- * Configuraties voor de verschillende lessen in het leerpad.
- * Elke les definieert de instellingen voor de animatie.
- * Wordt nog aangepast in de toekomst om meer lessen toe te voegen. Nu in Beta
+ * Configuraties voor de verschillende oefeningsen in het leerpad.
+ * Elke oefening definieert de instellingen voor de animatie.
+ * Wordt nog aangepast in de toekomst om meer oefeningsen toe te voegen. Nu in Beta
  */
 export const lessonConfigurations = [
     {
-        id: 'lesson1.0-flat',
-        name: 'Les 1: snaar indrukken',
+        id: 'oefening-1',
+        subid: 'oefening-1.0',
+        name: 'oefening 1: snaar indrukken (1 vinger)',
         settings: {
             speed: 1.0,
             numMountains: 1, // Niet relevant voor flat, maar consistentie
@@ -28,8 +29,9 @@ export const lessonConfigurations = [
         pathType: 'flat' // 'flat' of 'mountains'
     },
     {
-        id: 'lesson1.1-flat',
-        name: 'Les 1.1: snaar indrukken',
+        id: 'oefening-1',
+        subid: 'oefening1.1',
+        name: 'oefening 1.1: snaar indrukken (2 vingers)',
         settings: {
             speed: 1.0,
             numMountains: 1, // Niet relevant voor flat, maar consistentie
@@ -42,10 +44,11 @@ export const lessonConfigurations = [
         pathType: 'flat' // 'flat' of 'mountains'
     },
     {
-        id: 'lesson1.1a-flat',
-        name: 'Les 1.1a: Snaar indrukken',
+        id: 'oefening-1',
+        subid: 'oefening1.1a',
+        name: 'oefening 1.1a: Snaar indrukken (3 vingers)',
         settings: {
-            speed: 1.2,
+            speed: 1.0,
             numMountains: 1,
             includePlateaus: false,
             numFingers: 3,
@@ -56,31 +59,64 @@ export const lessonConfigurations = [
         pathType: 'flat'
     },
     {
-        id: 'lesson1.1b-flat',
-        name: 'Les 1.1b: Snaar indrukken pt.I, duimpositie',
+        id: 'oefening-1',
+        subid: 'oefening1.1b',
+        name: 'oefening 1.1b: Snaar indrukken (duimpositie, 1 vinger)',
         settings: {
-            speed: 1.5,
+            speed: 1.0,
             numMountains: 1,
             includePlateaus: false,
-            numFingers: 3,
+            numFingers: 1,
             colorTempo: 40, // BPM
-            fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue],
+            fingerColors: [hexColors.yellow],
             description: 'Druk de snaar in op de puls van de bal. Wissel de vingers af met de kleur van de bal. Gebruik de duimpositie. Chromatisch.',
         },
         pathType: 'flat'
     },
     {
-        id: 'lesson1.1c-flat',
-        name: 'Les 1.1c: Snaar indrukken pt.II, duimpositie. Chromatisch',
+        id: 'oefening-1',
+        subid: 'oefening-1.1c',
+        name: 'oefening 1.1c: snaar indrukken (duimpositie, 2 vingers)',
         settings: {
-            speed: 1,
-            numMountains: 1,
+            speed: 1.0,
+            numMountains: 1, // Niet relevant voor flat, maar consistentie
             includePlateaus: false,
-            numFingers: 4,
+            numFingers: 2,
+            colorTempo: 40, // BPM
+            fingerColors: [hexColors.yellow, hexColors.green],
+            description: 'Druk de snaar in op de puls van de bal. Wissel de vingers af met de kleur van de bal.',
+        },
+        pathType: 'flat' // 'flat' of 'mountains'
+    },    
+    {
+        id: 'oefening-1',
+        subid: 'oefening-1.1d',
+        name: 'oefening 1.1d: snaar indrukken (duimpositie, 3 vingers)',
+        settings: {
+            speed: 1.0,
+            numMountains: 1, // Niet relevant voor flat, maar consistentie
+            includePlateaus: false,
+            numFingers: 3,
+            colorTempo: 40, // BPM
+            fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue],
+            description: 'Druk de snaar in op de puls van de bal. Wissel de vingers af met de kleur van de bal.',
+        },
+        pathType: 'flat' // 'flat' of 'mountains'
+    },
+        {
+        id: 'oefening-1',
+        subid: 'oefening-1.1d',
+        name: 'oefening 1.1c: snaar indrukken (duimpositie, 4 vingers)',
+        settings: {
+            speed: 1.0,
+            numMountains: 1, // Niet relevant voor flat, maar consistentie
+            includePlateaus: false,
+            numFingers: 2,
             colorTempo: 40, // BPM
             fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue, hexColors.purple],
-            description: 'Druk de snaar in op de puls van de bal. Wissel de vingers af met de kleur van de bal. Gebruik de duimpositie: chromatisch, semichromatisch en diatonisch.',
+            description: 'Druk de snaar in op de puls van de bal. Wissel de vingers af met de kleur van de bal.',
         },
-        pathType: 'flat'
-    }
+        pathType: 'flat' // 'flat' of 'mountains'
+    },
+
 ];
