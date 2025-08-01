@@ -105,13 +105,13 @@ export const lessonConfigurations = [
     },
         {
         id: 'oefening-1',
-        subid: 'oefening-1.1d',
-        name: 'oefening 1.1c: snaar indrukken (duimpositie, 4 vingers)',
+        subid: 'oefening-1.1e',
+        name: 'oefening 1.1e: snaar indrukken (duimpositie, 4 vingers)',
         settings: {
             speed: 1.0,
             numMountains: 1, // Niet relevant voor flat, maar consistentie
             includePlateaus: false,
-            numFingers: 2,
+            numFingers: 4,
             colorTempo: 40, // BPM
             fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue, hexColors.purple],
             description: 'Druk de snaar in op de puls van de bal. Wissel de vingers af met de kleur van de bal.',

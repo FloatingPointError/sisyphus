@@ -284,9 +284,8 @@ button {
 }
 
 #lessonPathContainer {
-    margin-top: 1rem;
+    margin-top: 4rem;
     background-color: #fff;
-    width: 90%;
     max-width: 1200px;
     box-sizing: border-box;
     text-align: left;
@@ -299,24 +298,26 @@ button {
     flex-direction: row; /* Knoppen en links naast elkaar */
     flex-wrap: wrap; /* Laat de kolommen wrappen op kleine schermen */
     gap: 20px; /* Ruimte tussen de knoppenkolom en de linkskolom */
-    justify-content: center; /* Centreer de kolommen horizontaal */
+    justify-content: left; /* Centreer de kolommen horizontaal */
     align-items: flex-start; /* Lijn de bovenkanten van de kolommen uit */
 }
 
-#lessonPathContainer .lesson-buttons,
-#lessonPathContainer .lesson-links {
+#lessonPathContainer button,
+#lessonPathContainer a {
     display: flex;
-    flex-direction: column; /* Stapel de items binnen deze containers verticaal */
+    flex-direction: row;
+    justify-content: center;
     gap: 10px; /* Ruimte tussen de individuele knoppen/links */
-    flex: 1; /* Laat ze gelijke ruimte innemen */
-    min-width: 250px; /* Minimale breedte voor elke kolom */
+    /* flex: 1; Laat ze gelijke ruimte innemen */
+    /* max-width: fit-content;
+    min-width: 40%; */
     /* Optioneel: Achtergrond/padding voor de kolommen zelf */
     /* background-color: #f0f0f0; */
     /* padding: 15px; */
     /* border-radius: 5px; */
 }
 
-#lessonPathContainer .lesson-buttons button {
+#lessonPathContainer button {
     background-color: #3498db;
     color: white;
     padding: 10px 15px;
@@ -324,19 +325,20 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    font-weight: bold;
-    width: 100%; /* Knoppen vullen de breedte van hun container */
+    min-width: 20%;
+    margin-right: 0;
+    font-size: 0.95em;
 }
 
-#lessonPathContainer .lesson-buttons button:hover {
+#lessonPathContainer button button:hover {
     background-color: #2980b9;
 }
 
-#lessonPathContainer .lesson-links a {
+#lessonPathContainer a {
     font-size: 0.95em;
     color: #3498db; /* Linkkleur */
     text-decoration: none;
-    padding: 10px 0; /* Padding voor klikbaarheid */
+    padding: 10px 15px; /* Padding voor klikbaarheid */
     display: block; /* Zorgt ervoor dat padding en breedte werken */
     width: 100%; /* Links vullen de breedte van hun container */
     box-sizing: border-box;

@@ -81,25 +81,33 @@ export function initLessonManager(domElements, coreAppFunctions) {
         startAnimationOrCountdown(newPathData);
     }
 
+    // Centreer naar animationCanvas
+    function focusOnCanvas() {
+        domElements.canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     // Genereer leerpad knoppen
-    const lessonButtonsContainer = lessonPathContainer.querySelector('.lesson-buttons');
     lessonConfigurations.forEach(lesson => {
+        // Wrapper voor de button en de link
+        const divWrapper = document.createElement('div');
+        lessonPathContainer.appendChild(divWrapper);
+        divWrapper.style = 'display: flex; flex-direction: row; width: 100%';
+
+        // De button creëren en eventlisteners toevoegen
         const button = document.createElement('button');
         button.textContent = lesson.subid; // Gebruik subid als tekst
         button.dataset.lessonId = lesson.subid;
         button.addEventListener('click', () => loadLesson(lesson.subid));
-        lessonButtonsContainer.appendChild(button);
-    });
+        button.addEventListener('click', focusOnCanvas);
+        divWrapper.appendChild(button);
 
-    // Hier komen de links naar de html pagina met meer uitleg over de les. De postfix is de les ID.
-    const lessonLinksContainer = lessonPathContainer.querySelector('.lesson-links');
-    lessonConfigurations.forEach(lesson => {
+
+
+        // De link creëren en eventlisteners toevoegen
         const link = document.createElement('a');
         link.href = `oefeningen/${lesson.id}.html`; // Verwijst naar de les pagina
         link.textContent = lesson.name;
         link.target = '_a'; // Open in een nieuw tabblad (maar steeds dezelfde tab)
-        lessonLinksContainer.appendChild(link);
+        divWrapper.appendChild(link);
     });
-
-
 }
