@@ -85,24 +85,10 @@ export function initLessonManager(domElements, coreAppFunctions) {
     const lessonButtonsContainer = lessonPathContainer.querySelector('.lesson-buttons');
     lessonConfigurations.forEach(lesson => {
         const button = document.createElement('button');
-        button.textContent = lesson.name;
+        button.textContent = lesson.subid; // Gebruik subid als tekst
         button.dataset.lessonId = lesson.subid;
         button.addEventListener('click', () => loadLesson(lesson.subid));
         lessonButtonsContainer.appendChild(button);
-    });
-
-    // Voeg een uitleg toe voor de leerpad
-    const explainer = lessonPathContainer.querySelector('.learning-path-explainer');
-    // Dynamisch de uitleg toevoegen aan de hand van de huidige les. Bevindt zich in de description van de les.
-    explainer.textContent = lessonConfigurations[0].settings.description; // Start met de eerste les uitleg
-    lessonButtonsContainer.addEventListener('click', (event) => {
-        if (event.target.tagName === 'BUTTON') {
-            const lessonId = event.target.dataset.lessonId;
-            const lesson = lessonConfigurations.find(l => l.id === lessonId);
-            if (lesson) {
-                explainer.textContent = lesson.settings.description; // Update de uitleg
-            }
-        }
     });
 
     // Hier komen de links naar de html pagina met meer uitleg over de les. De postfix is de les ID.

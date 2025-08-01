@@ -284,7 +284,7 @@ button {
 }
 
 #lessonPathContainer {
-    margin-top: 4rem;
+    margin-top: 1rem;
     background-color: #fff;
     width: 90%;
     max-width: 1200px;
@@ -293,21 +293,27 @@ button {
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
 
-#lessonPathContainer h2 {
-    color: #2c3e50;
-    padding-left: 0.3rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-#lessonPathContainer .lesson-buttons {
+    /* NIEUW: Maak lessonPathContainer een flex container voor de kolommen */
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content:start;
+    flex-direction: row; /* Knoppen en links naast elkaar */
+    flex-wrap: wrap; /* Laat de kolommen wrappen op kleine schermen */
+    gap: 20px; /* Ruimte tussen de knoppenkolom en de linkskolom */
+    justify-content: center; /* Centreer de kolommen horizontaal */
+    align-items: flex-start; /* Lijn de bovenkanten van de kolommen uit */
+}
+
+#lessonPathContainer .lesson-buttons,
+#lessonPathContainer .lesson-links {
+    display: flex;
+    flex-direction: column; /* Stapel de items binnen deze containers verticaal */
+    gap: 10px; /* Ruimte tussen de individuele knoppen/links */
+    flex: 1; /* Laat ze gelijke ruimte innemen */
+    min-width: 250px; /* Minimale breedte voor elke kolom */
+    /* Optioneel: Achtergrond/padding voor de kolommen zelf */
+    /* background-color: #f0f0f0; */
+    /* padding: 15px; */
+    /* border-radius: 5px; */
 }
 
 #lessonPathContainer .lesson-buttons button {
@@ -318,12 +324,26 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    flex: 1 1 auto; /* Flexibel in breedte */
-    min-width: 120px; /* Minimale breedte voor knoppen */
+    font-weight: bold;
+    width: 100%; /* Knoppen vullen de breedte van hun container */
 }
 
 #lessonPathContainer .lesson-buttons button:hover {
     background-color: #2980b9;
+}
+
+#lessonPathContainer .lesson-links a {
+    font-size: 0.95em;
+    color: #3498db; /* Linkkleur */
+    text-decoration: none;
+    padding: 10px 0; /* Padding voor klikbaarheid */
+    display: block; /* Zorgt ervoor dat padding en breedte werken */
+    width: 100%; /* Links vullen de breedte van hun container */
+    box-sizing: border-box;
+}
+
+#lessonPathContainer .lesson-links a:hover {
+    text-decoration: underline;
 }
 
 
