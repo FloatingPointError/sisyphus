@@ -1,6 +1,7 @@
 // app/lessonManager.js
 
-import { lessonConfigurations } from './lessonData.js';
+import { lessonConfigurations } from '../oefeningen/lessonData.js';
+import { parentLessons } from '../oefeningen/parentLessons.js';
 
 /**
  * Initialiseert de leerpad functionaliteit.
@@ -23,7 +24,8 @@ export function initLessonManager(domElements, coreAppFunctions) {
         fingerColorInputs,
         colorTempoSlider,
         currentColorTempoSpan,
-        lessonPathContainer
+        lessonPathContainer,
+        parentLessonButtons,
     } = domElements;
 
     const {
@@ -34,13 +36,59 @@ export function initLessonManager(domElements, coreAppFunctions) {
     } = coreAppFunctions;
 
     /**
-     * Laadt de instellingen voor een specifieke les en start de animatie.
-     * @param {string} lessonId - De ID van de les die geladen moet worden.
+     * Deze functie retourneert alle ids van de childLessons van deze parent.
+     * @param {*} parentId 
+     * @returns object containing childlesson subids
      */
-    function loadLesson(lessonId) {
-        const lesson = lessonConfigurations.find(l => l.subid === lessonId);
+    function loadChildLessons(parentId) {
+        // Vind alle lessen waar de parent id gelijk is aan parentId;
+        const parentLesson = lessonConfigurations.find(p => p.parentId === parentId);
+        console.log(parentId);
+
+        if (!parentLesson) {
+            console.error('Exercise not found', parentId);
+            return;
+        }
+
+        const childLessons = parentLesson.lessons;
+        return childLessons;
+    }
+
+    /**
+     * Genereert de knoppen voor de parent lessons.
+     */
+    function generateParentLessonButtons() {
+        parentLessons.forEach((parent) => {
+            const parentButton = document.createElement('button');
+            parentButton.textContent = parent.name;
+            parentButton.dataset.parentId = parent.id;
+            parentButton.addEventListener('click', () => clearLessonPathContainer());
+            parentButton.addEventListener('click', () => generateLessonButtonsAndLinks(parent.id));
+            parentLessonButtons.appendChild(parentButton);
+        });
+    }
+
+    /**
+     * Clears the lessonPathContainer
+     * @returns none
+     */
+    function clearLessonPathContainer() {
+        // Verwijder alle child elementen van lessonPathContainer
+        while (lessonPathContainer.firstChild) {
+            lessonPathContainer.removeChild(lessonPathContainer.firstChild);
+        }
+        // Reset de innerHTML om te voorkomen dat oude data blijft hangen
+        lessonPathContainer.innerHTML = "";
+    }
+
+    /**
+     * Laadt de instellingen voor een specifieke les en start de animatie.
+     * @param {object} lesson - De ID van de les die geladen moet worden.
+     */
+    function loadLesson(lesson) {
+        // const lesson = lesson.find(l => l.subid === lessonId);
         if (!lesson) {
-            console.error('Les niet gevonden:', lessonId);
+            console.error('Exercise not found', lesson);
             return;
         }
 
@@ -86,28 +134,34 @@ export function initLessonManager(domElements, coreAppFunctions) {
         domElements.canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // Genereer leerpad knoppen
-    lessonConfigurations.forEach(lesson => {
-        // Wrapper voor de button en de link
-        const divWrapper = document.createElement('div');
-        lessonPathContainer.appendChild(divWrapper);
-        divWrapper.style = 'display: flex; flex-direction: row; width: 100%';
+    function generateLessonButtonsAndLinks(parentLessonId) {
+        const childLessons = loadChildLessons(parentLessonId);
+        console.log(parentLessonId);
 
-        // De button creëren en eventlisteners toevoegen
-        const button = document.createElement('button');
-        button.textContent = lesson.subid; // Gebruik subid als tekst
-        button.dataset.lessonId = lesson.subid;
-        button.addEventListener('click', () => loadLesson(lesson.subid));
-        button.addEventListener('click', focusOnCanvas);
-        divWrapper.appendChild(button);
+        childLessons.forEach(lesson => {
+            // Wrapper voor de button en de link
+            const divWrapper = document.createElement('div');
+            lessonPathContainer.appendChild(divWrapper);
+            divWrapper.style = 'display: flex; flex-direction: row; width: 100%';
 
+            // De button creëren en eventlisteners toevoegen
+            const button = document.createElement('button');
+            button.textContent = lesson.subid; // Gebruik subid als tekst
+            button.dataset.lessonId = lesson.subid;
+            button.addEventListener('click', () => loadLesson(lesson));
+            button.addEventListener('click', focusOnCanvas);
+            divWrapper.appendChild(button);
 
+            // De link creëren en eventlisteners toevoegen
+            const link = document.createElement('a');
+            link.href = `oefeningen/${lesson.id}.html`; // Verwijst naar de les pagina
+            link.textContent = lesson.name;
+            link.target = '_a'; // Open in een nieuw tabblad (maar steeds dezelfde tab)
+            divWrapper.appendChild(link);
+        });
+    }
 
-        // De link creëren en eventlisteners toevoegen
-        const link = document.createElement('a');
-        link.href = `oefeningen/${lesson.id}.html`; // Verwijst naar de les pagina
-        link.textContent = lesson.name;
-        link.target = '_a'; // Open in een nieuw tabblad (maar steeds dezelfde tab)
-        divWrapper.appendChild(link);
-    });
+    // TODO: verplaatst deze naar de nodige plek.
+    generateParentLessonButtons();
+    
 }

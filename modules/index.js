@@ -30,6 +30,7 @@ export function getDomElements() {
         ],
         colorTempoSlider: document.getElementById('colorTempoSlider'),
         currentColorTempoSpan: document.getElementById('currentColorTempo'),
-        lessonPathContainer: document.getElementById('lessonPathContainer')
+        lessonPathContainer: document.getElementById('lessonPathContainer'),
+        parentLessonButtons: document.getElementById('parentLessonButtons'),
     };
 }

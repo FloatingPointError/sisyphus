@@ -226,6 +226,15 @@ button {
     color: white;
 }
 
+/* Specific setting for the controls group reset button */
+#resetButton {
+    background-color: #f05442;
+}
+
+#resetButton:hover {
+    background-color: #e8402d;
+}
+
 .color-picker-group {
     display: flex;
     flex-direction: row;
@@ -269,6 +278,10 @@ button {
     text-decoration: none;
     display: block; /* Zorgt ervoor dat de link de volledige knop bedekt */
     width: 100%; /* Volledige breedte van de knop */
+}
+
+.learning-paths {
+    margin-top: 5rem;
 }
 
 /* Styling voor het leerpad */
@@ -346,6 +359,26 @@ button {
 
 #lessonPathContainer .lesson-links a:hover {
     text-decoration: underline;
+}
+
+#parentLessonButtons button{
+    justify-content: center;
+    gap: 15px;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 20%;
+    /* margin-right: 0; */
+    margin: 4px 4px;
+    font-size: 0.95em;
+}
+
+#parentLessonButtons button button:hover {
+    background-color: #2980b9;
 }
 
 

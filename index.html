@@ -14,62 +14,62 @@
 
         <div id="controlsContainer" class="hidden">
             <div class="controls-group flex-row">
-                <button id="startButton">Start Vlakke Lijn</button>
-                <button id="generateMountainsButton">Genereer & Start Hellingen</button>
+                <button id="startButton">Start Plateau</button>
+                <button id="generateMountainsButton">Generate & Start Slopes</button>
                 <button id="resetButton">Reset</button>
             </div>
 
             <div class="controls-group flex-row">
                 <div class="slider-row">
-                    <label for="speedSlider">Snelheid bal:</label>
+                    <label for="speedSlider">Ballspeed:</label>
                     <input type="range" id="speedSlider" min="0.5" max="4" value="2" step="0.1">
                     <span id="currentSpeed">2.0x</span>
                 </div>
 
                 <div class="slider-row">
-                    <label for="numMountainsSlider">Aantal Hellingen:</label>
+                    <label for="numMountainsSlider">Number of slopes:</label>
                     <input type="range" id="numMountainsSlider" min="2" max="10" value="2" step="1">
                     <span id="currentNumMountains">2</span>
                 </div>
 
                 <div class="include-plateaus-row">
-                    <label for="includePlateausCheckbox">Inclusief Vlaktes</label> 
+                    <label for="includePlateausCheckbox">Include plateaus</label> 
                     <input type="checkbox" id="includePlateausCheckbox">
                 </div>
             </div>
 
             <div class="controls-group flex-row"> 
                 <div class="slider-row">
-                    <label for="numFingersSlider">Aantal Vingers:</label>
+                    <label for="numFingersSlider">Number of fingers:</label>
                     <input type="range" id="numFingersSlider" min="1" max="4" value="1" step="1">
                     <span id="currentNumFingers">1</span>   
                 </div>
 
 
                 <div class="slider-row">
-                    <label for="colorTempoSlider">Kleur Tempo:</label>
+                    <label for="colorTempoSlider">Color Tempo:</label>
                     <input type="range" id="colorTempoSlider" min="30" max="100" value="40" step="1">
                     <span id="currentColorTempo">50 BPM</span>    
                 </div>
                 
                 <div class="color-picker-group">
                     <div class="color-picker-row">
-                        <label for="fingerColor1">Kleur vinger 1:</label>
+                        <label for="fingerColor1">Finger 1 color:</label>
                         <input type="color" id="fingerColor1" value="#f05442"> 
                     </div>
                 
                     <div class="color-picker-row">
-                        <label for="fingerColor2">Kleur vinger 2:</label>
+                        <label for="fingerColor2">Finger 2 color:</label>
                         <input type="color" id="fingerColor2" value="#9ce3d3"> 
                     </div>
                     
                     <div class="color-picker-row">
-                        <label for="fingerColor3">Kleur vinger 3:</label>
+                        <label for="fingerColor3">Finger 3 color:</label>
                         <input type="color" id="fingerColor3" value="#97caf3"> 
                     </div>
                     
                     <div class="color-picker-row">
-                        <label for="fingerColor4">Kleur vinger 4:</label>
+                        <label for="fingerColor4">Finger 4 color:</label>
                         <input type="color" id="fingerColor4" value="#c4a2f7">
                     </div>
                 </div>
@@ -78,19 +78,26 @@
         </div>
 
         <div class="app-buttons">
-            <button id="toggleControlsButton">Instellingen & Herstarten</button>
+            <button id="toggleControlsButton">Settings and restart</button>
             <button>
-                <a href="uitleg.html" class="app-button-link">Lees de uitleg</a>
+                <a href="uitleg.html" class="app-button-link">Read the instructions</a>
             </button>
-            <button id="fullscreenButton" style="visibility: collapse;">Volledig scherm</button>
+            <button id="fullscreenButton" style="visibility: collapse;">Full screen</button>
         </div>
 
         
-        <div id="lessonPathContainer">
-            <h3>Learning pathway</h3>
-            <!-- Knoppen worden hier dynamisch toegevoegd door JavaScript -->
-            <!-- Hier komen de links naar de lessen (toegevoegd via lessonManager) -->
+        <div class="learning-paths">
+            <h3>Learning Paths</h3>
+            <div id="parentLessonButtons">
+                <!-- knoppen voor de parentLessons -->
+            </div>
+            <div id="lessonPathContainer">
+                <!-- Knoppen worden hier dynamisch toegevoegd door JavaScript -->
+                <!-- Hier komen de links naar de lessen (toegevoegd via lessonManager) -->
+                 <p>Select a learning path from above.</p>
+            </div>
         </div>
+        
     </div>
 </div>
     

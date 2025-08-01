@@ -1,0 +1,125 @@
+const hexColors = {
+    yellow: '#f05442',
+    green: '#9ce3d3',
+    blue: '#97caf3',
+    purple: '#c4a2f7',
+    pink: '#ed9fca',
+    orange: '#fcc7a1',
+}
+
+/**
+ * Configuraties voor de verschillende oefeningsen in het leerpad.
+ * Elke oefening definieert de instellingen voor de animatie.
+ * Wordt nog aangepast in de toekomst om meer oefeningsen toe te voegen. Nu in Beta
+ */
+export const lessonConfigurations = [
+    {
+        parentId: 1,
+        lessons: [
+            {
+                id: 'oefening-1',
+                subid: 'exercise 1.0',
+                name: 'oefening 1: pushing the string (1 finger)',
+                settings: {
+                    speed: 1.0,
+                    numMountains: 1, // Niet relevant voor flat, maar consistentie
+                    includePlateaus: false,
+                    numFingers: 1,
+                    colorTempo: 40, // BPM
+                    fingerColors: [hexColors.yellow],
+                },
+                pathType: 'flat' // 'flat' of 'mountains'
+            },
+            {
+                id: 'oefening-1',
+                subid: 'exercise 1.1',
+                name: 'oefening 1.1: pushing the string (2 fingers)',
+                settings: {
+                    speed: 1.0,
+                    numMountains: 1, // Niet relevant voor flat, maar consistentie
+                    includePlateaus: false,
+                    numFingers: 2,
+                    colorTempo: 40, // BPM
+                    fingerColors: [hexColors.yellow, hexColors.green],
+                },
+                pathType: 'flat' // 'flat' of 'mountains'
+            },
+            {
+                id: 'oefening-1',
+                subid: 'exercise 1.1a',
+                name: 'exercise 1.1a: pushing the string (3 fingers)',
+                settings: {
+                    speed: 1.0,
+                    numMountains: 1,
+                    includePlateaus: false,
+                    numFingers: 3,
+                    colorTempo: 40, // BPM
+                    fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue],
+                },
+                pathType: 'flat'
+            },
+            {
+                id: 'oefening-1',
+                subid: 'exercise 1.1b',
+                name: 'exercise 1.1b: pushing the string in thumbpostion (1 finger)',
+                settings: {
+                    speed: 1.0,
+                    numMountains: 1,
+                    includePlateaus: false,
+                    numFingers: 1,
+                    colorTempo: 40, // BPM
+                    fingerColors: [hexColors.yellow],
+                },
+                pathType: 'flat'
+            },
+            {
+                id: 'oefening-1',
+                subid: 'exercise-1.1c',
+                name: 'exercise 1.1c: pushing the string in thumbpostion (2 fingers)',
+                settings: {
+                    speed: 1.0,
+                    numMountains: 1, // Niet relevant voor flat, maar consistentie
+                    includePlateaus: false,
+                    numFingers: 2,
+                    colorTempo: 40, // BPM
+                    fingerColors: [hexColors.yellow, hexColors.green],
+                },
+                pathType: 'flat' // 'flat' of 'mountains'
+            },    
+            {
+                id: 'oefening-1',
+                subid: 'exercise 1.1d',
+                name: 'exercise 1.1d: pushing the string in thumbpostion (3 fingers)',
+                settings: {
+                    speed: 1.0,
+                    numMountains: 1, // Niet relevant voor flat, maar consistentie
+                    includePlateaus: false,
+                    numFingers: 3,
+                    colorTempo: 40, // BPM
+                    fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue],
+                },
+                pathType: 'flat' // 'flat' of 'mountains'
+            },
+                {
+                id: 'oefening-1',
+                subid: 'exercise 1.1e',
+                name: 'exercise 1.1e: pushing the string in thumbpostion (4 fingers)',
+                settings: {
+                    speed: 1.0,
+                    numMountains: 1, // Niet relevant voor flat, maar consistentie
+                    includePlateaus: false,
+                    numFingers: 4,
+                    colorTempo: 40, // BPM
+                    fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue, hexColors.purple],
+                },
+                pathType: 'flat' // 'flat' of 'mountains'
+            }, 
+        ],     
+    },
+    {
+        parentId: 2,
+        lessons: [
+            //
+        ],
+    }
+];

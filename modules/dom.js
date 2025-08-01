@@ -31,8 +31,8 @@ export function setupEventListeners(domElements, state, functions) {
         state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
         state.currentPathData = state.flatPath;
         functions.resetBall(state, functions);
-        startButton.textContent = "Start Vlakke Lijn";
-        generateMountainsButton.textContent = "Genereer & Start Hellingen";
+        startButton.textContent = "Start plateau";
+        generateMountainsButton.textContent = "Generate and start slopes";
     });
 
     speedSlider.addEventListener('input', () => {
@@ -78,9 +78,9 @@ export function setupEventListeners(domElements, state, functions) {
     toggleControlsButton.addEventListener('click', () => {
         controlsContainer.classList.toggle('hidden');
         if (controlsContainer.classList.contains('hidden')) {
-            toggleControlsButton.textContent = "Toon Knoppen";
+            toggleControlsButton.textContent = "Show settings";
         } else {
-            toggleControlsButton.textContent = "Verberg Knoppen";
+            toggleControlsButton.textContent = "Hide settings";
         }
     });
 
@@ -89,7 +89,7 @@ export function setupEventListeners(domElements, state, functions) {
             document.exitFullscreen();
         } else {
             appContainer.requestFullscreen().catch(err => {
-                alert(`Fout bij fullscreen: ${err.message} (zorg dat de browser dit toestaat)`);
+                alert(`Error at fullscreen: ${err.message} (make sure the browser alows this)`);
             });
         }
     });
@@ -164,8 +164,8 @@ export function adjustCanvasSizeAndPath(state, functions) {
  * @param {object} domElements Een object met DOM-elementen.
  */
 export function updateButtonLabels(domElements) {
-    domElements.startButton.textContent = "Herstart Vlakke Lijn";
-    domElements.generateMountainsButton.textContent = "Herstart Hellingen";
+    domElements.startButton.textContent = "Start plateau";
+    domElements.generateMountainsButton.textContent = "Generate & Start slopes";
 }
 
 /**

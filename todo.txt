@@ -1,5 +1,1 @@
 - maak een menu
-- push het leerpad naar onderen
-- vertaling naar Engels
-- bij het aanklikken van een leerpad, ga automatisch naar boven
-- maak een sectie van het leerpad -> dit is een one-page application
