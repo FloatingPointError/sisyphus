@@ -15,28 +15,31 @@ export function setupEventListeners(domElements, state, functions) {
         currentColorTempoSpan, currentNumFingersSpan, appContainer, canvas
     } = domElements;
 
-    // Deze knop start de animatie (inclusief countdown) op basis van de sliderinstellingen.
+// --- Play Button Event Listener ---
     playButton.addEventListener('click', () => {
-        // Start alleen als de animatie nog niet loopt en niet in de countdown zit
-        if (state.animationId === null && !state.isCountingDown) {
-            let pathDataToUse;
-            const numMountains = parseInt(numMountainsSlider.value);
-            const includePlateaus = includePlateausCheckbox.checked;
+        // Stop eventuele lopende animatie of countdown
+        cancelAnimationFrame(state.animationId);
+        clearInterval(state.countdownIntervalId);
+        state.animationId = null;
+        state.isCountingDown = false;
 
-            if (numMountains > 1) {
-                // Genereer een bergpad als aantal hellingen > 1
-                pathDataToUse = functions.generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
-            } else {
-                // Initialiseer een vlak pad als aantal hellingen 1 of minder is
-                state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight); // Zorg dat flatPath up-to-date is
-                pathDataToUse = state.flatPath;
-            }
-            
-            state.currentPathData = pathDataToUse; // Update de huidige paddata in de state
-            
-            // startAnimationOrCountdown zal de countdown starten en daarna de animatie
-            functions.startAnimationOrCountdown(state, functions, pathDataToUse);
+        let pathDataToUse;
+        const numMountains = parseInt(numMountainsSlider.value);
+        const includePlateaus = includePlateausCheckbox.checked;
+
+        if (numMountains > 1) {
+            // Genereer een bergpad als aantal hellingen > 1
+            pathDataToUse = functions.generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
+        } else {
+            // Initialiseer een vlak pad als aantal hellingen 1 of minder is
+            state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight); // Zorg dat flatPath up-to-date is
+            pathDataToUse = state.flatPath;
         }
+        
+        state.currentPathData = pathDataToUse; // Update de huidige paddata in de state
+        
+        // Start de animatie of countdown direct met het gekozen pad
+        functions.startAnimationOrCountdown(state, functions, pathDataToUse);  
         functions.triggerGlowEffect(canvas); // Trigger glow effect
     });
 

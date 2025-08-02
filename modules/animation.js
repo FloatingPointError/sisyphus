@@ -142,7 +142,8 @@ export function startAnimationOrCountdown(state, functions, pathData) {
     cancelAnimationFrame(state.animationId);
     clearInterval(state.countdownIntervalId);
     state.animationId = null; // Zorg dat animationId null is bij start
-    state.currentPathData = pathData;
+    // state.currentPathData = pathData; // <-- DEZE REGEL IS VERWIJDERD
+    // De pathData is al ingesteld in state.currentPathData door de aanroepende functie (playButton)
     
     // Initialiseer kleurenlogica met HUIDIGE instellingen (niet default)
     functions.ballColorModule.initializeBallColorLogic(
@@ -236,14 +237,15 @@ export function resetBall(state, functions, defaultSettings) {
             defaultSettings.colorTempo,
             defaultSettings.fingerColors
         );
-    } else {
-        // Als defaultSettings NIET is meegegeven (voor stop-knop):
+    } else { // Dit is de tak voor de stop-knop of adjustCanvasSizeAndPath
         // Initialiseer ballColorLogic met de HUIDIGE UI-waarden
         functions.ballColorModule.initializeBallColorLogic(
             parseInt(state.domElements.numFingersSlider.value),
             parseInt(state.domElements.colorTempoSlider.value),
             state.domElements.fingerColorInputs.map(input => input.value)
         );
+        // BELANGRIJK: Hier wordt het pad NIET opnieuw gegenereerd,
+        // zodat state.currentPathData behouden blijft zoals het was ingesteld door playButton.
     }
 
     // Reset de balpositie en straal
