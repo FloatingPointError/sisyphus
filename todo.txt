@@ -1,1 +1,3 @@
-- maak een menu
+- maak een menu voor de uitleg pagina
+- maak een privacy statement
+- zorg ervoor dat de volgorde van de kleuren die worden gebruikt in het lespad hetzelde zijn als de volgorde in main.js
