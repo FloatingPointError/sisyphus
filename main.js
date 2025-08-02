@@ -8,7 +8,7 @@ import { initLessonManager } from './elements/lessonManager.js';
 // Importeer de nieuwe modules
 import { initializeFlatPathCurves, generateMountainPath, getYForX } from './modules/paths.js';
 import { animate, startAnimationOrCountdown, resetBall, calculateBallRadius } from './modules/animation.js';
-import { setupEventListeners, adjustCanvasSizeAndPath, updateButtonLabels, setCanvasWidthCssVariable, triggerGlowEffect } from './modules/dom.js';
+import { setupEventListeners, adjustCanvasSizeAndPath, setCanvasWidthCssVariable, triggerGlowEffect } from './modules/dom.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const domElements = getDomElements();
@@ -34,6 +34,16 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownValue: 4     // AANGEPAST: countdownValue toegevoegd aan state
     };
 
+    // DEFINIEER DE STANDAARDINSTELLINGEN HIER
+    const DEFAULT_SETTINGS = {
+        speed: 1.0,
+        numMountains: 1, // Standaardwaarde uit HTML
+        includePlateaus: false, // Standaardwaarde uit HTML
+        numFingers: 1, // Standaardwaarde uit HTML
+        colorTempo: 40, // Standaardwaarde uit HTML
+        fingerColors: ['#f05442', '#ffe064', '#2980b9', '#944dff'] // Standaardkleuren uit HTML
+    };
+
     // Een object om alle geëxporteerde functies van de modules te bundelen
     // Zo hoeven we ze niet overal apart door te geven
     const functions = {
@@ -41,15 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
         generateMountainPath,
         getYForX,
         animate,
-        startAnimationOrCountdown,
+        startAnimationOrCountdown: (pathData) => startAnimationOrCountdown(state, functions, pathData),
         resetBall,
         calculateBallRadius,
         setupEventListeners,
         adjustCanvasSizeAndPath,
-        updateButtonLabels,
         setCanvasWidthCssVariable,
         triggerGlowEffect,
         ballColorModule,
+        DEFAULT_SETTINGS,
+        state,
     };
 
     // Initialiseer het pad en de bal
@@ -60,23 +71,26 @@ document.addEventListener('DOMContentLoaded', () => {
     adjustCanvasSizeAndPath(state, functions);
 
     // Initialiseer de les manager met de benodigde functies en state
-    initLessonManager(domElements, {
-        initializeFlatPathCurves: () => {
-            state.flatPath = initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
-            return state.flatPath;
-        },
-        generateMountainPath: (numMountains, includePlateaus) => {
-            return generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
-        },
-        startAnimationOrCountdown: (pathData) => startAnimationOrCountdown(state, functions, pathData),
-        ballColorModule: ballColorModule,
-        flatPath: state.flatPath
-    });
+    // initLessonManager(domElements, {
+    //     initializeFlatPathCurves: () => {
+    //         state.flatPath = initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
+    //         return state.flatPath;
+    //     },
+    //     generateMountainPath: (numMountains, includePlateaus) => {
+    //         return generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
+    //     },
+    //     startAnimationOrCountdown: (pathData) => startAnimationOrCountdown(state, functions, pathData),
+    //     ballColorModule: ballColorModule,
+    //     flatPath: state.flatPath,
+    //     state: state // BELANGRIJK: Geef de state door aan lessonManager
+    // });;
+    initLessonManager(domElements, functions); 
+
     
     // Koppel de event listeners
     setupEventListeners(domElements, state, functions);
 
-    // Start de app door de bal te resetten en te tekenen
-    resetBall(state, functions);
+    // Start de app door de bal te resetten en te tekenen met de standaardinstellingen
+    resetBall(state, functions, functions.DEFAULT_SETTINGS);
 });
 

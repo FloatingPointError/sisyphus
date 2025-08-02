@@ -9,8 +9,8 @@ export function getDomElements() {
     return {
         appContainer: document.getElementById('appContainer'),
         canvas: document.getElementById('animationCanvas'),
-        startButton: document.getElementById('startButton'),
-        generateMountainsButton: document.getElementById('generateMountainsButton'),
+        // startButton: document.getElementById('startButton'),
+        // generateMountainsButton: document.getElementById('generateMountainsButton'),
         resetButton: document.getElementById('resetButton'),
         speedSlider: document.getElementById('speedSlider'),
         currentSpeedSpan: document.getElementById('currentSpeed'),
@@ -32,5 +32,7 @@ export function getDomElements() {
         currentColorTempoSpan: document.getElementById('currentColorTempo'),
         lessonPathContainer: document.getElementById('lessonPathContainer'),
         parentLessonButtons: document.getElementById('parentLessonButtons'),
+        playButton: document.getElementById('playButton'),
+        stopButton: document.getElementById('stopButton'),
     };
 }

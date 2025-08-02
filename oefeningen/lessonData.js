@@ -1,11 +1,14 @@
-const hexColors = {
-    yellow: '#f05442',
+// fingerColors: ['#f05442', '#ffe064', '#0851bb', '#944dffff'] // Standaardkleuren uit HTML
+// maak een nieuws object met hex kleuren voor de vingers
+export const hexColors = {
+    yellow: '#ffe064', // f05442
+    red: '#2980b9',
+    blue: '#0851bb',
+    purple: '#944dff',
     green: '#9ce3d3',
-    blue: '#97caf3',
-    purple: '#c4a2f7',
     pink: '#ed9fca',
     orange: '#fcc7a1',
-}
+};
 
 /**
  * Configuraties voor de verschillende oefeningsen in het leerpad.
@@ -26,7 +29,7 @@ export const lessonConfigurations = [
                     includePlateaus: false,
                     numFingers: 1,
                     colorTempo: 40, // BPM
-                    fingerColors: [hexColors.yellow],
+                    fingerColors: [hexColors.red],
                 },
                 pathType: 'flat' // 'flat' of 'mountains'
             },
@@ -40,7 +43,7 @@ export const lessonConfigurations = [
                     includePlateaus: false,
                     numFingers: 2,
                     colorTempo: 40, // BPM
-                    fingerColors: [hexColors.yellow, hexColors.green],
+                    fingerColors: [hexColors.red, hexColors.yellow],
                 },
                 pathType: 'flat' // 'flat' of 'mountains'
             },
@@ -54,7 +57,7 @@ export const lessonConfigurations = [
                     includePlateaus: false,
                     numFingers: 3,
                     colorTempo: 40, // BPM
-                    fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue],
+                    fingerColors: [hexColors.red, hexColors.yellow, hexColors.blue],
                 },
                 pathType: 'flat'
             },
@@ -68,7 +71,7 @@ export const lessonConfigurations = [
                     includePlateaus: false,
                     numFingers: 1,
                     colorTempo: 40, // BPM
-                    fingerColors: [hexColors.yellow],
+                    fingerColors: [hexColors.red],
                 },
                 pathType: 'flat'
             },
@@ -82,7 +85,7 @@ export const lessonConfigurations = [
                     includePlateaus: false,
                     numFingers: 2,
                     colorTempo: 40, // BPM
-                    fingerColors: [hexColors.yellow, hexColors.green],
+                    fingerColors: [hexColors.red, hexColors.yellow],
                 },
                 pathType: 'flat' // 'flat' of 'mountains'
             },    
@@ -96,7 +99,7 @@ export const lessonConfigurations = [
                     includePlateaus: false,
                     numFingers: 3,
                     colorTempo: 40, // BPM
-                    fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue],
+                    fingerColors: [hexColors.red, hexColors.yellow, hexColors.blue],
                 },
                 pathType: 'flat' // 'flat' of 'mountains'
             },
@@ -110,7 +113,7 @@ export const lessonConfigurations = [
                     includePlateaus: false,
                     numFingers: 4,
                     colorTempo: 40, // BPM
-                    fingerColors: [hexColors.yellow, hexColors.green, hexColors.blue, hexColors.purple],
+                    fingerColors: [hexColors.red, hexColors.yellow, hexColors.blue, hexColors.purple],
                 },
                 pathType: 'flat' // 'flat' of 'mountains'
             }, 

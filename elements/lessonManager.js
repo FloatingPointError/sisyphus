@@ -18,6 +18,7 @@ export function initLessonManager(domElements, coreAppFunctions) {
         speedSlider,
         currentSpeedSpan,
         numMountainsSlider,
+        currentNumMountainsSpan,
         includePlateausCheckbox,
         numFingersSlider,
         currentNumFingersSpan,
@@ -32,7 +33,8 @@ export function initLessonManager(domElements, coreAppFunctions) {
         initializeFlatPathCurves,
         generateMountainPath,
         startAnimationOrCountdown,
-        ballColorModule
+        ballColorModule,
+        state,
     } = coreAppFunctions;
 
     /**
@@ -43,7 +45,6 @@ export function initLessonManager(domElements, coreAppFunctions) {
     function loadChildLessons(parentId) {
         // Vind alle lessen waar de parent id gelijk is aan parentId;
         const parentLesson = lessonConfigurations.find(p => p.parentId === parentId);
-        console.log(parentId);
 
         if (!parentLesson) {
             console.error('Exercise not found', parentId);
@@ -81,22 +82,24 @@ export function initLessonManager(domElements, coreAppFunctions) {
         lessonPathContainer.innerHTML = "";
     }
 
-    /**
+    /** 
      * Laadt de instellingen voor een specifieke les en start de animatie.
-     * @param {object} lesson - De ID van de les die geladen moet worden.
+     * @param {object} lesson - Het lesobject dat geladen moet worden.
      */
     function loadLesson(lesson) {
-        // const lesson = lesson.find(l => l.subid === lessonId);
         if (!lesson) {
-            console.error('Exercise not found', lesson);
+            console.error('Lesobject is ongeldig:', lesson);
             return;
         }
 
         // Pas UI-elementen aan
         speedSlider.value = lesson.settings.speed;
         currentSpeedSpan.textContent = lesson.settings.speed.toFixed(1) + 'x';
+        // BELANGRIJK: Update ook de ballSpeed in de state van de hoofdapplicatie
+        state.ballSpeed = lesson.settings.speed; // <-- DEZE REGEL IS NIEUW
 
         numMountainsSlider.value = lesson.settings.numMountains;
+        currentNumMountainsSpan.textContent = lesson.settings.numMountains; // Zorg dat de span ook wordt bijgewerkt
 
         includePlateausCheckbox.checked = lesson.settings.includePlateaus;
 
@@ -111,22 +114,26 @@ export function initLessonManager(domElements, coreAppFunctions) {
             if (lesson.settings.fingerColors[index]) {
                 input.value = lesson.settings.fingerColors[index];
             } else {
-                input.value = '#000000'; // Standaard zwart als er geen kleur is opgegeven
+                input.value = '#FFFFFF'; // Standaard wit als er geen kleur is opgegeven
             }
         });
         // Zorg ervoor dat de ballColorModule de nieuwe kleuren ook krijgt
         ballColorModule.updateFingerColors(lesson.settings.fingerColors);
 
-
         // Start de animatie met de les-specifieke paden
         let newPathData;
         if (lesson.pathType === 'flat') {
-            initializeFlatPathCurves();
-            newPathData = coreAppFunctions.flatPath; // Gebruik de flatPath van coreAppFunctions
+            // initializeFlatPathCurves() moet canvasWidth en canvasHeight krijgen
+            newPathData = initializeFlatPathCurves(state.canvasWidth, state.canvasHeight); 
+            state.flatPath = newPathData; // Update flatPath in state
         } else {
-            newPathData = generateMountainPath(lesson.settings.numMountains, lesson.settings.includePlateaus);
+            // generateMountainPath moet canvasWidth en canvasHeight krijgen
+            newPathData = generateMountainPath(lesson.settings.numMountains, lesson.settings.includePlateaus, state.canvasWidth, state.canvasHeight);
         }
+        state.currentPathData = newPathData; // Update currentPathData in state
         startAnimationOrCountdown(newPathData);
+        // Focus op canvas na het starten van de les
+        focusOnCanvas();
     }
 
     // Centreer naar animationCanvas
@@ -136,7 +143,6 @@ export function initLessonManager(domElements, coreAppFunctions) {
 
     function generateLessonButtonsAndLinks(parentLessonId) {
         const childLessons = loadChildLessons(parentLessonId);
-        console.log(parentLessonId);
 
         childLessons.forEach(lesson => {
             // Wrapper voor de button en de link

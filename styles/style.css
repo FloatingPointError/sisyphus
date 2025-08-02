@@ -206,7 +206,7 @@ button {
 /* De span staat nu direct in de controls-group */
 .controls-group span {
     font-weight: normal;
-    color: #777;
+    color: #2c3e50;
     font-size: 0.9em;
     margin-bottom: 0; /* Geen marge hier */
     /* text-align: left; <--- Optioneel, als je het links wilt uitlijnen */
@@ -225,26 +225,28 @@ button {
     margin-top: auto; /* Duwt de knop naar de onderkant */
 }
 
-.controls-group button:hover {
-    background-color: #2980b9;
-    color: white;
-    transition: background-color ease 0.7s;
-}
-
-.control-icon .icon {
+.icon {
     width: 24px; /* Size of the SVG icon */
     height: 24px;
-    display: block;
+    transition: transform 0.3s ease-in-out; /* Smooth scaling effect on hover */
+    cursor: pointer; /* Pointer cursor to indicate it's clickable */
+}
+
+.icon:hover {
+    transform: scale(1.2);
 }
 
 /* Specific setting for the controls group reset button */
 #resetButton {
     background-color: #f05442;
     color: white;
+    transition: background-color ease 0.7s;
 }
 
 #resetButton:hover {
     background-color: #e8402d;
+    color: white;
+    transition: background-color ease 0.7s;
 }
 
 .color-picker-group {

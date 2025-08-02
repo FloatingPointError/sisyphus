@@ -92,7 +92,7 @@ export function draw(state, functions) {
         ctx.lineTo(state.canvasWidth, state.canvasHeight);
         ctx.lineTo(0, state.canvasHeight);
         ctx.closePath();
-        ctx.fillStyle = '#E0E0E0'; // Effen lichtgrijze vulling voor de vlakke lijn
+        ctx.fillStyle = '#FFFFFF'; // Effen lichtgrijze vulling voor de vlakke lijn
         ctx.fill();
 
         ctx.beginPath();
@@ -141,57 +141,117 @@ export function draw(state, functions) {
 export function startAnimationOrCountdown(state, functions, pathData) {
     cancelAnimationFrame(state.animationId);
     clearInterval(state.countdownIntervalId);
-    state.animationId = null;
+    state.animationId = null; // Zorg dat animationId null is bij start
     state.currentPathData = pathData;
     
+    // Initialiseer kleurenlogica met HUIDIGE instellingen (niet default)
     functions.ballColorModule.initializeBallColorLogic(
         parseInt(state.domElements.numFingersSlider.value),
         parseInt(state.domElements.colorTempoSlider.value),
         state.domElements.fingerColorInputs.map(input => input.value)
     );
 
-    functions.resetBall(state, functions);
-    functions.updateButtonLabels(state.domElements);
+    // Reset balpositie naar start van het huidige pad
+    functions.calculateBallRadius(state); 
+    state.ballX = state.ballRadius + 50; // Met offset
+    state.ballY = functions.getYForX(state.ballX, state.currentPathData, state.canvasHeight); 
 
-    state.isCountingDown = true; // Gebruik state.isCountingDown
-    state.countdownValue = 4;    // Gebruik state.countdownValue
-    draw(state, functions);
+    state.isCountingDown = true;
+    state.countdownValue = 4;
+    draw(state, functions); // Eerste tekening voor countdown
     
     const beatInterval = 1200; 
 
-    state.countdownIntervalId = setInterval(() => { // Gebruik state.countdownIntervalId
-        state.countdownValue--; // Gebruik state.countdownValue
-        if (state.countdownValue > 0) { // Gebruik state.countdownValue
+    state.countdownIntervalId = setInterval(() => {
+        state.countdownValue--;
+        if (state.countdownValue > 0) {
             draw(state, functions);
         } else {
-            clearInterval(state.countdownIntervalId); // Gebruik state.countdownIntervalId
-            state.isCountingDown = false; // Gebruik state.isCountingDown
+            clearInterval(state.countdownIntervalId);
+            state.isCountingDown = false;
             lastFrameTime = performance.now();
             animate(state, functions, lastFrameTime);
         }
     }, beatInterval);
 }
 
+
 /**
- * Reset de bal naar de startpositie en de animatie.
+ * Reset de bal naar de startpositie en de animatie, en reset alle instellingen naar standaardwaarden.
+ * Deze functie kan ook gebruikt worden om alleen de animatie te stoppen en de bal te verbergen,
+ * zonder de UI-instellingen te resetten, door 'defaultSettings' als null/undefined door te geven.
  * @param {object} state De huidige status van de app.
  * @param {object} functions Externe functies om aan te roepen.
+ * @param {object} [defaultSettings] De standaardinstellingen om naar te resetten (optioneel).
  */
-export function resetBall(state, functions) {
+export function resetBall(state, functions, defaultSettings) {
     cancelAnimationFrame(state.animationId);
     clearInterval(state.countdownIntervalId);
-    state.isCountingDown = false; // Gebruik state.isCountingDown
+    state.animationId = null; // Belangrijk: zet animationId op null bij reset
+    state.isCountingDown = false;
     
+    // Als er defaultSettings zijn meegegeven, pas deze toe. Anders, behoud de huidige instellingen.
+    if (defaultSettings) {
+        // Reset de state variabelen naar standaardwaarden
+        state.ballSpeed = defaultSettings.speed;
+        state.countdownValue = 4; // Reset countdown waarde
+
+        // Reset de UI-elementen naar standaardwaarden
+        state.domElements.speedSlider.value = defaultSettings.speed;
+        state.domElements.currentSpeedSpan.textContent = defaultSettings.speed.toFixed(1) + 'x';
+
+        state.domElements.numMountainsSlider.value = defaultSettings.numMountains;
+        state.domElements.currentNumMountainsSpan.textContent = defaultSettings.numMountains;
+
+        state.domElements.includePlateausCheckbox.checked = defaultSettings.includePlateaus;
+
+        state.domElements.numFingersSlider.value = defaultSettings.numFingers;
+        state.domElements.currentNumFingersSpan.textContent = defaultSettings.numFingers;
+
+        state.domElements.colorTempoSlider.value = defaultSettings.colorTempo;
+        state.domElements.currentColorTempoSpan.textContent = defaultSettings.colorTempo + ' BPM';
+
+        // Reset vingerkleuren
+        defaultSettings.fingerColors.forEach((color, index) => {
+            if (state.domElements.fingerColorInputs[index]) {
+                state.domElements.fingerColorInputs[index].value = color;
+            }
+        });
+
+        // Initialiseer het pad opnieuw op basis van default numMountains (vlak of hellingen)
+        if (defaultSettings.numMountains > 1) {
+            state.currentPathData = functions.generateMountainPath(
+                defaultSettings.numMountains,
+                defaultSettings.includePlateaus,
+                state.canvasWidth,
+                state.canvasHeight
+            );
+        } else {
+            state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
+            state.currentPathData = state.flatPath;
+        }
+
+        functions.ballColorModule.initializeBallColorLogic(
+            defaultSettings.numFingers,
+            defaultSettings.colorTempo,
+            defaultSettings.fingerColors
+        );
+    } else {
+        // Als defaultSettings NIET is meegegeven (voor stop-knop):
+        // Initialiseer ballColorLogic met de HUIDIGE UI-waarden
+        functions.ballColorModule.initializeBallColorLogic(
+            parseInt(state.domElements.numFingersSlider.value),
+            parseInt(state.domElements.colorTempoSlider.value),
+            state.domElements.fingerColorInputs.map(input => input.value)
+        );
+    }
+
+    // Reset de balpositie en straal
     functions.calculateBallRadius(state); 
-    state.ballX = state.ballRadius; 
+    state.ballX = state.ballRadius + 50; // Met offset
     state.ballY = functions.getYForX(state.ballX, state.currentPathData, state.canvasHeight); 
     
-    draw(state, functions);
-    functions.ballColorModule.initializeBallColorLogic(
-        parseInt(state.domElements.numFingersSlider.value),
-        parseInt(state.domElements.colorTempoSlider.value),
-        state.domElements.fingerColorInputs.map(input => input.value)
-    );
+    draw(state, functions); // Teken de canvas in de geresette positie (zonder bal als animationId null is)
 }
 
 /**

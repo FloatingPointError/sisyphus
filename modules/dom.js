@@ -15,24 +15,44 @@ export function setupEventListeners(domElements, state, functions) {
         currentColorTempoSpan, currentNumFingersSpan, appContainer, canvas
     } = domElements;
 
-    startButton.addEventListener('click', () => {
-        state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
-        functions.startAnimationOrCountdown(state, functions, state.flatPath);
+    // Deze knop start de animatie (inclusief countdown) op basis van de sliderinstellingen.
+    playButton.addEventListener('click', () => {
+        // Start alleen als de animatie nog niet loopt en niet in de countdown zit
+        if (state.animationId === null && !state.isCountingDown) {
+            let pathDataToUse;
+            const numMountains = parseInt(numMountainsSlider.value);
+            const includePlateaus = includePlateausCheckbox.checked;
+
+            if (numMountains > 1) {
+                // Genereer een bergpad als aantal hellingen > 1
+                pathDataToUse = functions.generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
+            } else {
+                // Initialiseer een vlak pad als aantal hellingen 1 of minder is
+                state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight); // Zorg dat flatPath up-to-date is
+                pathDataToUse = state.flatPath;
+            }
+            
+            state.currentPathData = pathDataToUse; // Update de huidige paddata in de state
+            
+            // startAnimationOrCountdown zal de countdown starten en daarna de animatie
+            functions.startAnimationOrCountdown(state, functions, pathDataToUse);
+        }
+        functions.triggerGlowEffect(canvas); // Trigger glow effect
     });
 
-    generateMountainsButton.addEventListener('click', () => {
-        const numMountains = parseInt(numMountainsSlider.value);
-        const includePlateaus = includePlateausCheckbox.checked;
-        const newMountainPathData = functions.generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
-        functions.startAnimationOrCountdown(state, functions, newMountainPathData);
+
+    // --- Stop Button Event Listener (stopt alleen de animatie) ---
+    stopButton.addEventListener('click', () => {
+        // Stop alleen als er een animatie loopt of een countdown bezig is
+        if (state.animationId || state.isCountingDown) {
+            functions.resetBall(state, functions, null); 
+        }
     });
 
+    // --- Reset Button Event Listener (reset alle instellingen en stopt animatie) ---
     resetButton.addEventListener('click', () => {
-        state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
-        state.currentPathData = state.flatPath;
-        functions.resetBall(state, functions);
-        startButton.textContent = "Start plateau";
-        generateMountainsButton.textContent = "Generate and start slopes";
+        // Roep resetBall aan met de standaardinstellingen om alles te resetten
+        functions.resetBall(state, functions, functions.DEFAULT_SETTINGS); 
     });
 
     speedSlider.addEventListener('input', () => {
@@ -52,7 +72,7 @@ export function setupEventListeners(domElements, state, functions) {
             fingerColorInputs.map(input => input.value)
         );
         if (!state.isCountingDown && state.animationId) {
-            functions.draw(state, functions);
+            console.log("Redrawing with new amount of fingers");
         }
     });
 
@@ -61,7 +81,7 @@ export function setupEventListeners(domElements, state, functions) {
             const newColors = fingerColorInputs.map(input => input.value);
             functions.ballColorModule.updateFingerColors(newColors);
             if (!state.isCountingDown && state.animationId) {
-                functions.draw(state, functions);
+                console.log("Redrawing with new finger colors");
             }
         });
     });
@@ -71,7 +91,7 @@ export function setupEventListeners(domElements, state, functions) {
         currentColorTempoSpan.textContent = newTempo + ' BPM';
         functions.ballColorModule.updateColorTempo(newTempo);
         if (!state.isCountingDown && state.animationId) {
-            functions.draw(state, functions);
+            console.log("Redrawing with new color tempo");
         }
     });
 
@@ -109,7 +129,7 @@ export function setupEventListeners(domElements, state, functions) {
 
     functions.ballColorModule.setOnColorChangeCallback(() => functions.triggerGlowEffect(canvas));
 
-    functions.updateButtonLabels(domElements);
+    // functions.updateButtonLabels(domElements);
 }
 
 /**
@@ -118,7 +138,7 @@ export function setupEventListeners(domElements, state, functions) {
  * @param {object} functions Externe functies om aan te roepen.
  */
 export function adjustCanvasSizeAndPath(state, functions) {
-    const { appContainer, canvas, numMountainsSlider, includePlateausCheckbox } = state.domElements;
+    const { appContainer, canvas, numMountainsSlider, includePlateausCheckbox, fingerColorInputs, speedSlider, numFingersSlider, colorTempoSlider } = state.domElements; // Toegevoegde DOM-elementen
 
     if (document.fullscreenElement) {
         canvas.width = appContainer.clientWidth * 0.95; 
@@ -126,7 +146,7 @@ export function adjustCanvasSizeAndPath(state, functions) {
     } else {
         const maxNormalWidth = 1000;
         const normalPadding = 40;
-        const CANVAS_ASPECT_RATIO = 1000 / 400; // Hardcoded, kan beter in een state-object
+        const CANVAS_ASPECT_RATIO = 1000 / 400;
 
         let availableWidth = appContainer.clientWidth - normalPadding;
         if (availableWidth > maxNormalWidth) {
@@ -148,24 +168,26 @@ export function adjustCanvasSizeAndPath(state, functions) {
 
     functions.setCanvasWidthCssVariable(canvas);
 
-    if (state.currentPathData === state.flatPath) {
+    const numMountains = parseInt(numMountainsSlider.value);
+    const includePlateaus = includePlateausCheckbox.checked;
+
+    if (numMountains > 1) {
+        state.currentPathData = functions.generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
+    } else {
         state.flatPath = functions.initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
         state.currentPathData = state.flatPath;
-    } else {
-        const numMountains = parseInt(numMountainsSlider.value);
-        const includePlateaus = includePlateausCheckbox.checked;
-        state.currentPathData = functions.generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
     }
-    functions.resetBall(state, functions);
-}
 
-/**
- * Past de tekst van de startknoppen aan.
- * @param {object} domElements Een object met DOM-elementen.
- */
-export function updateButtonLabels(domElements) {
-    domElements.startButton.textContent = "Start plateau";
-    domElements.generateMountainsButton.textContent = "Generate & Start slopes";
+    // Bij het aanpassen van het canvas, reset de bal zonder de instellingen te wijzigen
+    // Geef de huidige instellingen door als 'default' voor resetBall
+    functions.resetBall(state, functions, { 
+        speed: parseFloat(speedSlider.value), // Gebruik huidige speedSlider waarde
+        numMountains: parseInt(numMountainsSlider.value),
+        includePlateaus: includePlateausCheckbox.checked,
+        numFingers: parseInt(numFingersSlider.value),
+        colorTempo: parseInt(colorTempoSlider.value),
+        fingerColors: fingerColorInputs.map(input => input.value)
+    });
 }
 
 /**

@@ -24,8 +24,8 @@
 
         <div id="controlsContainer" class="hidden">
             <div class="controls-group flex-row">
-                <button id="startButton">Start Plateau</button>
-                <button id="generateMountainsButton">Generate & Start Slopes</button>
+                <!-- <button id="startButton">Start Plateau</button>
+                <button id="generateMountainsButton">Generate and start slopes</button> -->
                 <button id="resetButton">Reset</button>
             </div>
 
@@ -38,8 +38,8 @@
 
                 <div class="slider-row">
                     <label for="numMountainsSlider">Number of slopes:</label>
-                    <input type="range" id="numMountainsSlider" min="2" max="10" value="2" step="1">
-                    <span id="currentNumMountains">2</span>
+                    <input type="range" id="numMountainsSlider" min="1" max="10" value="1" step="1">
+                    <span id="currentNumMountains">1</span>
                 </div>
 
                 <div class="include-plateaus-row">
@@ -91,7 +91,7 @@
             <button id="toggleControlsButton">Show settings</button>
                         <!-- NEW: Play/Pause and Stop Icons -->
             <div class="playback-controls">
-                <button id="playPauseButton" class="control-icon">
+                <button id="playButton" class="control-icon">
                     <!-- Play Icon -->
                     <img src="play-button.svg" alt="Play" class="icon play-icon">
                 </button>
