@@ -25,13 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
         canvasWidth: domElements.canvas.width,
         canvasHeight: domElements.canvas.height,
         canvasAspectRatio: CANVAS_ASPECT_RATIO,
-        ballSpeed: parseFloat(domElements.speedSlider.value),
+        ballSpeed: parseFloat(domElements.speedSlider.value), // Wordt overschreven door DEFAULT_SETTINGS
         animationId: null,
         countdownIntervalId: null,
         currentPathData: null,
         flatPath: null,
-        isCountingDown: false, // AANGEPAST: isCountingDown toegevoegd aan state
-        countdownValue: 4     // AANGEPAST: countdownValue toegevoegd aan state
+        isCountingDown: false,
+        countdownValue: 4,
+        wakeLock: null // NIEUW: Property om de WakeLockSentinel op te slaan
     };
 
     // DEFINIEER DE STANDAARDINSTELLINGEN HIER
@@ -41,8 +42,39 @@ document.addEventListener('DOMContentLoaded', () => {
         includePlateaus: false, // Standaardwaarde uit HTML
         numFingers: 1, // Standaardwaarde uit HTML
         colorTempo: 40, // Standaardwaarde uit HTML
-        fingerColors: ['#f05442', '#ffe064', '#2980b9', '#944dff'] // Standaardkleuren uit HTML
+        fingerColors: ['#f05442', '#ffe064', '#0851bb', '#944dff'] // Standaardkleuren uit HTML
     };
+
+    /**
+     * Vraagt een wake lock aan om te voorkomen dat het scherm uitschakelt.
+     */
+    async function requestWakeLock() {
+        if ('wakeLock' in navigator) {
+            try {
+                state.wakeLock = await navigator.wakeLock.request('screen');
+                console.log('Wake Lock geactiveerd!');
+                state.wakeLock.addEventListener('release', () => {
+                    console.log('Wake Lock vrijgegeven door systeem.');
+                    state.wakeLock = null; // Zorg dat de referentie wordt geleegd
+                });
+            } catch (err) {
+                console.error(`Fout bij aanvragen Wake Lock: ${err.name}, ${err.message}`);
+            }
+        } else {
+            console.warn('Wake Lock API wordt niet ondersteund in deze browser.');
+        }
+    }
+
+    /**
+     * Geeft de actieve wake lock vrij.
+     */
+    function releaseWakeLock() {
+        if (state.wakeLock) {
+            state.wakeLock.release();
+            state.wakeLock = null;
+            console.log('Wake Lock vrijgegeven!');
+        }
+    }
 
     // Een object om alle geëxporteerde functies van de modules te bundelen
     // Zo hoeven we ze niet overal apart door te geven
@@ -51,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
         generateMountainPath,
         getYForX,
         animate,
-        startAnimationOrCountdown: (pathData) => startAnimationOrCountdown(state, functions, pathData),
+        // startAnimationOrCountdown is gewrapped om 'state' en 'functions' automatisch door te geven
+        startAnimationOrCountdown: (pathData) => startAnimationOrCountdown(state, functions, pathData), 
         resetBall,
         calculateBallRadius,
         setupEventListeners,
@@ -60,7 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerGlowEffect,
         ballColorModule,
         DEFAULT_SETTINGS,
-        state,
+        state, // BELANGRIJK: Geef de state door
+        requestWakeLock, // NIEUW: Voeg wake lock functies toe
+        releaseWakeLock  // NIEUW: Voeg wake lock functies toe
     };
 
     // Initialiseer het pad en de bal
@@ -71,26 +106,25 @@ document.addEventListener('DOMContentLoaded', () => {
     adjustCanvasSizeAndPath(state, functions);
 
     // Initialiseer de les manager met de benodigde functies en state
-    // initLessonManager(domElements, {
-    //     initializeFlatPathCurves: () => {
-    //         state.flatPath = initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
-    //         return state.flatPath;
-    //     },
-    //     generateMountainPath: (numMountains, includePlateaus) => {
-    //         return generateMountainPath(numMountains, includePlateaus, state.canvasWidth, state.canvasHeight);
-    //     },
-    //     startAnimationOrCountdown: (pathData) => startAnimationOrCountdown(state, functions, pathData),
-    //     ballColorModule: ballColorModule,
-    //     flatPath: state.flatPath,
-    //     state: state // BELANGRIJK: Geef de state door aan lessonManager
-    // });;
+    // Geef het hele 'functions' object door, dat 'state' en alle andere functies bevat
     initLessonManager(domElements, functions); 
-
     
     // Koppel de event listeners
     setupEventListeners(domElements, state, functions);
 
     // Start de app door de bal te resetten en te tekenen met de standaardinstellingen
     resetBall(state, functions, functions.DEFAULT_SETTINGS);
-});
 
+    // Voeg een event listener toe voor 'visibilitychange' om wake lock opnieuw aan te vragen
+    // als de pagina weer zichtbaar wordt (wake lock kan automatisch worden vrijgegeven wanneer de tab onzichtbaar is)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && state.animationId !== null) {
+            // Vraag alleen opnieuw aan als de animatie actief is
+            requestWakeLock();
+        } else if (document.visibilityState === 'hidden') {
+            // Optioneel: geef wake lock vrij als de tab verborgen wordt
+            // Dit kan nuttig zijn om batterij te sparen als de animatie niet stopt.
+            // releaseWakeLock(); // Kan hier worden aangeroepen, maar resetBall dekt dit ook af bij stoppen.
+        }
+    });
+});

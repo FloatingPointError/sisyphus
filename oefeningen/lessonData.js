@@ -1,4 +1,4 @@
-// fingerColors: ['#f05442', '#ffe064', '#0851bb', '#944dffff'] // Standaardkleuren uit HTML
+// fingerColors: ['#f05442', '#ffe064', '#0851bb', '#944dff'] // Standaardkleuren uit HTML
 // maak een nieuws object met hex kleuren voor de vingers
 export const hexColors = {
     yellow: '#ffe064', // f05442
