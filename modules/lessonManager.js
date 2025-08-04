@@ -79,24 +79,24 @@ export function initLessonManager(domElements, coreAppFunctions) {
      * @returns none
      */
     function clearLessonPathContainer() {
-        // Verwijder eerst de initiële paragraaf als deze bestaat
-        const initialParagraph = lessonPathContainer.querySelector('p');
-        if (initialParagraph) {
-            initialParagraph.remove();
+        if (!lessonPathContainer) {
+            console.error('Lesson path container not found');
+            return;
         }
 
-        // Voeg een klasse toe om de overgang te starten voordat elementen worden verwijderd
-        Array.from(lessonPathContainer.children).forEach(child => {
-            // Zorg ervoor dat we alleen elementen met de 'lesson-entry' klasse animeren
-            if (child.classList.contains('lesson-entry')) {
-                child.classList.add('lesson-entry--initial'); // Voeg de klasse toe om te verbergen
-                // Verwijder het element na de transitie
-                child.addEventListener('transitionend', () => child.remove(), { once: true });
-            } else {
-                // Verwijder direct elementen die geen overgang nodig hebben (zoals de h2 titel als die er zou zijn)
+        if (lessonPathContainer.children.length > 0) {
+            // Voeg een klasse toe om de overgang te starten
+            lessonPathContainer.classList.add('fade-out');
+        }
+
+        // Wacht tot de fade-out transitie is voltooid voordat elementen worden verwijderd
+        setTimeout(() => {
+            Array.from(lessonPathContainer.children).forEach(child => {
                 child.remove();
-            }
-        });
+            });
+            // Verwijder de fade-out klasse zodat nieuwe elementen kunnen worden toegevoegd
+            lessonPathContainer.classList.remove('fade-out');
+        }, 500); // Wacht 0.5s voor de fade-out transitie
     }
 
     /**
@@ -161,8 +161,6 @@ export function initLessonManager(domElements, coreAppFunctions) {
      */
     function generateLessonButtonsAndLinks(parentLessonId) {
         const childLessons = loadChildLessons(parentLessonId);
-
-        clearLessonPathContainer(); // Eerst leegmaken met transitie
 
         childLessons.forEach((lesson, index) => {
             // Wrapper voor de button en de link
