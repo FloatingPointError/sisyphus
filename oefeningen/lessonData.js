@@ -2,7 +2,7 @@
 // maak een nieuws object met hex kleuren voor de vingers
 export const hexColors = {
     yellow: '#ffe064', // f05442
-    red: '#2980b9',
+    red: '#f05442',
     blue: '#0851bb',
     purple: '#944dff',
     green: '#9ce3d3',
@@ -18,11 +18,13 @@ export const hexColors = {
 export const lessonConfigurations = [
     {
         parentId: 1,
+        name: 'Pressing the String', // Naam voor de parent les
         lessons: [
             {
-                id: 'oefening-1',
-                subid: 'exercise 1.0',
+                id: 'exercise-1-0', // UNIEKE ID
+                subid: 'exercise-1-0',
                 name: 'oefening 1: pushing the string (1 finger)',
+                contentPath: '../oefeningen/content/exercise-1-0.html', // UNIEK PAD
                 settings: {
                     speed: 1.0,
                     numMountains: 1, // Niet relevant voor flat, maar consistentie
@@ -34,9 +36,10 @@ export const lessonConfigurations = [
                 pathType: 'flat' // 'flat' of 'mountains'
             },
             {
-                id: 'oefening-1',
-                subid: 'exercise 1.1',
+                id: 'exercise-1-0', 
+                subid: 'exercise-1-1',
                 name: 'oefening 1.1: pushing the string (2 fingers)',
+                contentPath: '../oefeningen/content/exercise-1-1.html', // UNIEK PAD
                 settings: {
                     speed: 1.0,
                     numMountains: 1, // Niet relevant voor flat, maar consistentie
@@ -48,9 +51,10 @@ export const lessonConfigurations = [
                 pathType: 'flat' // 'flat' of 'mountains'
             },
             {
-                id: 'oefening-1',
-                subid: 'exercise 1.1a',
-                name: 'exercise 1.1a: pushing the string (3 fingers)',
+                id: 'exercise-1-0', // UNIEKE ID
+                subid: 'exercise-1-2',
+                name: 'exercise 1.2: pushing the string (3 fingers)',
+                contentPath: '../oefeningen/content/exercise-1-2.html', // UNIEK PAD
                 settings: {
                     speed: 1.0,
                     numMountains: 1,
@@ -62,9 +66,10 @@ export const lessonConfigurations = [
                 pathType: 'flat'
             },
             {
-                id: 'oefening-1',
-                subid: 'exercise 1.1b',
-                name: 'exercise 1.1b: pushing the string in thumbpostion (1 finger)',
+                id: 'exercise-1-0', // UNIEKE ID
+                subid: 'exercise-1-3',
+                name: 'exercise 1.3: pushing the string in thumbpostion (1 finger)',
+                contentPath: '../oefeningen/content/exercise-1-3.html', // UNIEK PAD
                 settings: {
                     speed: 1.0,
                     numMountains: 1,
@@ -76,9 +81,10 @@ export const lessonConfigurations = [
                 pathType: 'flat'
             },
             {
-                id: 'oefening-1',
-                subid: 'exercise-1.1c',
-                name: 'exercise 1.1c: pushing the string in thumbpostion (2 fingers)',
+                id: 'exercise-1-0', // UNIEKE ID
+                subid: 'exercise 1-4',
+                name: 'exercise-1.4: pushing the string in thumbpostion (2 fingers)',
+                contentPath: '../oefeningen/content/exercise-1-4.html', // UNIEK PAD
                 settings: {
                     speed: 1.0,
                     numMountains: 1, // Niet relevant voor flat, maar consistentie
@@ -90,9 +96,10 @@ export const lessonConfigurations = [
                 pathType: 'flat' // 'flat' of 'mountains'
             },    
             {
-                id: 'oefening-1',
-                subid: 'exercise 1.1d',
-                name: 'exercise 1.1d: pushing the string in thumbpostion (3 fingers)',
+                id: 'exercise-1-0', // UNIEKE ID
+                subid: 'exercise-1-5',
+                name: 'exercise 1.5: pushing the string in thumbpostion (3 fingers)',
+                contentPath: '../oefeningen/content/exercise-1-5.html', // UNIEK PAD
                 settings: {
                     speed: 1.0,
                     numMountains: 1, // Niet relevant voor flat, maar consistentie
@@ -103,10 +110,11 @@ export const lessonConfigurations = [
                 },
                 pathType: 'flat' // 'flat' of 'mountains'
             },
-                {
-                id: 'oefening-1',
-                subid: 'exercise 1.1e',
-                name: 'exercise 1.1e: pushing the string in thumbpostion (4 fingers)',
+            {
+                id: 'exercise-1-0', // UNIEKE ID
+                subid: 'exercise-1-6',
+                name: 'exercise 1.6: pushing the string in thumbpostion (4 fingers)',
+                contentPath: '../oefeningen/content/exercise-1-6.html', // UNIEK PAD
                 settings: {
                     speed: 1.0,
                     numMountains: 1, // Niet relevant voor flat, maar consistentie
@@ -121,8 +129,9 @@ export const lessonConfigurations = [
     },
     {
         parentId: 2,
+        name: 'Another Learning Path', // Voorbeeld van een andere parent les
         lessons: [
-            //
+            // Voeg hier lessen toe voor parentId 2
         ],
     }
 ];

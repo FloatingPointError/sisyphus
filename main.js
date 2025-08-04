@@ -3,7 +3,7 @@
 import { ballColorModule } from './elements/ballColorModule.js';
 import { getDomElements } from './modules/index.js';
 import { drawSkyElements } from './elements/skyElements.js';
-import { initLessonManager } from './elements/lessonManager.js';
+import { initLessonManager } from './modules/lessonManager.js';
 
 // Importeer de nieuwe modules
 import { initializeFlatPathCurves, generateMountainPath, getYForX } from './modules/paths.js';

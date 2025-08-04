@@ -1,4 +1,9 @@
 /* styles/style.css */
+html {
+    scroll-padding-top: 80px; /* Pas deze waarde aan de hoogte van je navigatiebalk aan */
+                                /* Als je geen vaste navbalk hebt, maar een header,
+                                    kun je de hoogte van de header hier instellen. */
+}
 
 body {
     font-family: Arial, sans-serif;
@@ -57,21 +62,6 @@ p {
     padding: 0; /* Geen padding in fullscreen om max ruimte te benutten */
     justify-content: flex-start; /* Begin bovenaan in fullscreen */
     overflow: auto; /* Laat de container scrollen als de inhoud te groot is */
-}
-
-/* NIEUW: Styling voor de explainer div */
-header {
-    /* background-color: #d3e3fd; Lichtblauwe achtergrond */
-    color: #0851bb; /* Donkerblauwe tekstkleur */
-    /* border: 1px solid #b3e5fc; Lichtblauwe rand */
-    /* border-radius: 8px; */
-    padding: 15px 20px;
-    margin-bottom: 20px;
-    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); */
-    max-width: fit-content; /* Beperk de breedte voor leesbaarheid */
-    box-sizing: border-box;
-    overflow: hidden; /* Voorkom dat content buiten de box valt tijdens transitie */
-    flex-direction: column; flex-wrap: nowrap; display: flex;
 }
 
 canvas {
@@ -379,6 +369,7 @@ button {
     display: block; /* Zorgt ervoor dat padding en breedte werken */
     /* width: 100%; Links vullen de breedte van hun container */
     box-sizing: border-box;
+    padding-left: 0px;
 }
 
 #lessonPathContainer a:hover {

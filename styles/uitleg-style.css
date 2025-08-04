@@ -1,26 +1,133 @@
 /* styles/uitleg-style.css */
 
+/* Aangepaste kleuren voor vingers */
+:root {
+    --finger-color-1: #f05442; /* Rood */
+    --finger-color-2: #ffe064; /* Geel */
+    --finger-color-3: #0851bb; /* Blauw */
+    --finger-color-4: #944dff; /* Paars */
+}
+
 body {
     font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-    color: #333;
     display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Lijn bovenaan uit */
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     min-height: 100vh;
+    margin: 0;
+    overflow-y: scroll;
+    padding-top: 65px; /* gelijke hoogte als de menubar */
+    color: #2c3e50; /* Donkerblauwe tekstkleur */
+}
+
+/* Algemene scroll-padding voor vaste headers */
+html {
+    scroll-padding-top: 80px; /* Pas deze waarde aan de hoogte van je navigatiebalk aan */
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+}
+
+h2 {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+h3 {
+    font-size: clamp(1.2rem, 3vw, 2rem);
+}
+
+p {
+    font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
+}
+
+header {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    margin-top: -10vh; /* Negatieve marge om header bovenaan te positioneren */
+    box-sizing: border-box;
+}
+
+section {
+    margin-top: 1rem;
+    border: 2px solid black; /* Zwarte rand */
+    border-radius: 5px;
+    background-color: #FFFFFF; /* Witte achtergrond */
+    display: block;
+    flex-shrink: 0;
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+/* Styling voor de gekleurde ballen naast de titels */
+.finger-balls {
+    display: inline-flex; /* Om de ballen naast de titel te houden */
+    align-items: center;
+    gap: 5px; /* Ruimte tussen de ballen */
+    margin-left: 10px; /* Ruimte tussen de titeltekst en de ballen */
+    vertical-align: middle; /* Verticaal uitlijnen met de tekst */
+    transform: translate(0, 0); /* Startpositie voor JS animatie */
+    will-change: transform; /* Optimalisatie voor animatie */
+}
+
+.finger-ball {
+    width: 12px; /* Kleine grootte voor de bal */
+    height: 12px;
+    border-radius: 50%; /* Maak het rond */
+    border: 1px solid rgba(0, 0, 0, 0.3); /* Subtiele rand voor definitie */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Subtiele schaduw */
+    flex-shrink: 0; /* Voorkom dat de ballen kleiner worden op kleine schermen */
+}
+
+/* Kleuren toewijzen met CSS-variabelen */
+.finger-ball.color-1 { background-color: var(--finger-color-1); }
+.finger-ball.color-2 { background-color: var(--finger-color-2); }
+.finger-ball.color-3 { background-color: var(--finger-color-3); }
+.finger-ball.color-4 { background-color: var(--finger-color-4); }
+
+/* Zorg dat de h2-elementen flexibel genoeg zijn om de ballen te bevatten */
+section h2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Laat de ballen naar de volgende regel springen als er te weinig ruimte is */
 }
 
 .uitleg-container {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 800px; /* Maximale breedte voor leesbaarheid */
-    width: 100%; /* Zorgt ervoor dat het zich aanpast aan kleinere schermen */
-    box-sizing: border-box; /* Padding en border vallen binnen de breedte */
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+    padding: 20px;
+    width: 90%; /* Een beetje minder breedte om marge te geven */
+    max-width: 1200px; /* Maximale breedte voor grote schermen */
+    box-sizing: border-box; /* Zorg dat padding en border in de breedte vallen */
+    height: auto; /* Laat de hoogte zich aanpassen aan de inhoud */
+    overflow: hidden; /* Voorkom overflow problemen binnen de container zelf */
+    margin-top: 5rem; 
+    margin-bottom: 5rem; 
+    margin-left: auto; /* Behoudt horizontale centrering */
+    margin-right: auto; /* Behoudt horizontale centrering */
+}
+
+/* Z-index voor layering (tekst boven ballen) */
+.uitleg-container section h2,
+.uitleg-container section p,
+.uitleg-container section ul,
+.uitleg-container section li,
+.uitleg-container section h1,
+.uitleg-container section h5,
+.uitleg-container section h3,
+.uitleg-container section h4 {
+    position: relative; /* Crucial: z-index only works on positioned elements */
+    z-index: 2;         /* Geef tekst een hogere z-index */
+    /* background-color: white; /* Optioneel: als ballen door de tekst heen schijnen */
+}
+
+.finger-balls {
+    position: relative;
+    z-index: 1;         /* Geef ballen een lagere z-index dan tekst */
 }
 
 .uitleg-container h2 {
@@ -63,6 +170,45 @@ body {
 .terug-link:hover {
     background-color: #2980b9;
 }
+
+/* Styling voor de hoofdcontent container */
+#dynamicLessonContent {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fdfdfd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: 300px; /* Zorgt voor minimale hoogte */
+}
+
+#dynamicLessonContent h1, #dynamicLessonContent h2, #dynamicLessonContent h3, #dynamicLessonContent h4 {
+    color: #2c3e50; /* Consistent met je app kleuren */
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+#dynamicLessonContent p, #dynamicLessonContent ul, #dynamicLessonContent ol {
+    line-height: 1.6;
+    margin-bottom: 1em;
+}
+
+#dynamicLessonContent ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+#dynamicLessonContent ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+}
+
+#dynamicLessonContent code {
+    background-color: #eef;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
 
 /* --- Media Queries voor Mobiel --- */
 @media (max-width: 768px) {

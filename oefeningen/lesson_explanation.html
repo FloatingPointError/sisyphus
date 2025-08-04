@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Path Explanation - Bass Ball</title>
+    <link rel="stylesheet" href="../styles/style.css"> <!-- Relatief pad naar algemene styles -->
+    <link rel="stylesheet" href="../styles/uitleg-style.css"> <!-- Relatief pad naar uitleg specifieke styles -->
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav class="menubar">
+        <div class="menubar-content">
+            <a href="../index.html" class="menubar-brand">Bass Ball</a>
+            <ul class="menubar-links">
+                <li><a href="#dynamicLessonIndex">Index</a></li>
+                <li><a href="../uitleg.html" target="_blank">General instructions</a></li>
+                <li><a href="../index.html">Back to application</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="uitleg-container">
+        <!-- TODO: Dynamische lesindex wordt hier geladen -->
+         <!-- <div id="dynamicLessonIndex">
+            <p>Loading index...</p>
+         </div> -->
+        <div id="dynamicLessonContent">
+            <p>Loading lesson content...</p>
+        </div>
+    </div>
+
+    <!-- Importeer het nieuwe JavaScript-bestand voor de uitlegpagina -->
+    <script type="module" src="../modules/lessonExplanationLoader.js"></script>
+</body>
+</html>

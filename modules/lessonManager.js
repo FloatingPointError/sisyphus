@@ -1,4 +1,4 @@
-// app/lessonManager.js
+// app/elements/lessonManager.js
 
 import { lessonConfigurations } from '../oefeningen/lessonData.js';
 import { parentLessons } from '../oefeningen/parentLessons.js';
@@ -12,13 +12,13 @@ import { parentLessons } from '../oefeningen/parentLessons.js';
  * @param {function} coreAppFunctions.generateMountainPath - Functie om een bergpad te genereren.
  * @param {function} coreAppFunctions.startAnimationOrCountdown - Functie om de animatie te starten/countdown.
  * @param {object} coreAppFunctions.ballColorModule - De ballColorModule om kleuren en tempo bij te werken.
+ * @param {object} coreAppFunctions.state - Het globale state object van de app.
  */
 export function initLessonManager(domElements, coreAppFunctions) {
     const {
         speedSlider,
         currentSpeedSpan,
         numMountainsSlider,
-        currentNumMountainsSpan,
         includePlateausCheckbox,
         numFingersSlider,
         currentNumFingersSpan,
@@ -34,7 +34,7 @@ export function initLessonManager(domElements, coreAppFunctions) {
         generateMountainPath,
         startAnimationOrCountdown,
         ballColorModule,
-        state,
+        state // Het globale state object is nodig voor canvasWidth/Height
     } = coreAppFunctions;
 
     /**
@@ -43,16 +43,15 @@ export function initLessonManager(domElements, coreAppFunctions) {
      * @returns object containing childlesson subids
      */
     function loadChildLessons(parentId) {
-        // Vind alle lessen waar de parent id gelijk is aan parentId;
-        const parentLesson = lessonConfigurations.find(p => p.parentId === parentId);
+        // Vind de parent configuratie op basis van parentId
+        const parentConfig = lessonConfigurations.find(p => p.parentId === parentId);
 
-        if (!parentLesson) {
-            console.error('Exercise not found', parentId);
-            return;
+        if (!parentConfig) {
+            console.error('Parent lesson configuration not found for ID:', parentId);
+            return []; // Retourneer een lege array als de parent niet wordt gevonden
         }
 
-        const childLessons = parentLesson.lessons;
-        return childLessons;
+        return parentConfig.lessons;
     }
 
     /**
@@ -63,44 +62,61 @@ export function initLessonManager(domElements, coreAppFunctions) {
             const parentButton = document.createElement('button');
             parentButton.textContent = parent.name;
             parentButton.dataset.parentId = parent.id;
-            parentButton.addEventListener('click', () => clearLessonPathContainer());
-            parentButton.addEventListener('click', () => generateLessonButtonsAndLinks(parent.id));
+            // Eerst leegmaken met transitie, dan genereren
+            parentButton.addEventListener('click', () => {
+                clearLessonPathContainer();
+                // Geef een kleine vertraging zodat de 'clear' transitie kan starten
+                setTimeout(() => {
+                    generateLessonButtonsAndLinks(parent.id);
+                }, 500); // Wacht tot de verdwijn-transitie is voltooid (0.5s)
+            });
             parentLessonButtons.appendChild(parentButton);
         });
     }
 
     /**
-     * Clears the lessonPathContainer
+     * Clears the lessonPathContainer with a smooth transition.
      * @returns none
      */
     function clearLessonPathContainer() {
-        // Verwijder alle child elementen van lessonPathContainer
-        while (lessonPathContainer.firstChild) {
-            lessonPathContainer.removeChild(lessonPathContainer.firstChild);
+        // Verwijder eerst de initiële paragraaf als deze bestaat
+        const initialParagraph = lessonPathContainer.querySelector('p');
+        if (initialParagraph) {
+            initialParagraph.remove();
         }
-        // Reset de innerHTML om te voorkomen dat oude data blijft hangen
-        lessonPathContainer.innerHTML = "";
+
+        // Voeg een klasse toe om de overgang te starten voordat elementen worden verwijderd
+        Array.from(lessonPathContainer.children).forEach(child => {
+            // Zorg ervoor dat we alleen elementen met de 'lesson-entry' klasse animeren
+            if (child.classList.contains('lesson-entry')) {
+                child.classList.add('lesson-entry--initial'); // Voeg de klasse toe om te verbergen
+                // Verwijder het element na de transitie
+                child.addEventListener('transitionend', () => child.remove(), { once: true });
+            } else {
+                // Verwijder direct elementen die geen overgang nodig hebben (zoals de h2 titel als die er zou zijn)
+                child.remove();
+            }
+        });
     }
 
-    /** 
+    /**
      * Laadt de instellingen voor een specifieke les en start de animatie.
-     * @param {object} lesson - Het lesobject dat geladen moet worden.
+     * @param {object} lesson - De les object die geladen moet worden.
      */
     function loadLesson(lesson) {
         if (!lesson) {
-            console.error('Lesobject is ongeldig:', lesson);
+            console.error('Exercise not found', lesson);
             return;
         }
 
         // Pas UI-elementen aan
         speedSlider.value = lesson.settings.speed;
+        state.ballSpeed = lesson.settings.speed;
         currentSpeedSpan.textContent = lesson.settings.speed.toFixed(1) + 'x';
-        // BELANGRIJK: Update ook de ballSpeed in de state van de hoofdapplicatie
-        state.ballSpeed = lesson.settings.speed; // <-- DEZE REGEL IS NIEUW
 
         numMountainsSlider.value = lesson.settings.numMountains;
-        currentNumMountainsSpan.textContent = lesson.settings.numMountains; // Zorg dat de span ook wordt bijgewerkt
 
+        // Dit is een boolean, direct toewijzen
         includePlateausCheckbox.checked = lesson.settings.includePlateaus;
 
         numFingersSlider.value = lesson.settings.numFingers;
@@ -111,29 +127,27 @@ export function initLessonManager(domElements, coreAppFunctions) {
 
         // Pas vingerkleuren aan
         fingerColorInputs.forEach((input, index) => {
-            if (lesson.settings.fingerColors[index]) {
+            if (lesson.settings.fingerColors && lesson.settings.fingerColors[index]) {
                 input.value = lesson.settings.fingerColors[index];
             } else {
-                input.value = '#FFFFFF'; // Standaard wit als er geen kleur is opgegeven
+                input.value = '#FFFFFF'; // Standaard zwart als er geen kleur is opgegeven
             }
         });
         // Zorg ervoor dat de ballColorModule de nieuwe kleuren ook krijgt
         ballColorModule.updateFingerColors(lesson.settings.fingerColors);
 
+
         // Start de animatie met de les-specifieke paden
         let newPathData;
         if (lesson.pathType === 'flat') {
-            // initializeFlatPathCurves() moet canvasWidth en canvasHeight krijgen
-            newPathData = initializeFlatPathCurves(state.canvasWidth, state.canvasHeight); 
-            state.flatPath = newPathData; // Update flatPath in state
+            initializeFlatPathCurves(state.canvasWidth, state.canvasHeight); // Pass canvas dimensions
+            newPathData = state.flatPath; // Gebruik de flatPath van state
         } else {
-            // generateMountainPath moet canvasWidth en canvasHeight krijgen
-            newPathData = generateMountainPath(lesson.settings.numMountains, lesson.settings.includePlateaus, state.canvasWidth, state.canvasHeight);
+            newPathData = generateMountainPath(lesson.settings.numMountains, lesson.settings.includePlateaus, state.canvasWidth, state.canvasHeight); // Pass canvas dimensions
         }
         state.currentPathData = newPathData; // Update currentPathData in state
-        startAnimationOrCountdown(newPathData);
-        // Focus op canvas na het starten van de les
-        focusOnCanvas();
+
+        startAnimationOrCountdown(state, coreAppFunctions, newPathData); // Pass state and functions
     }
 
     // Centreer naar animationCanvas
@@ -141,15 +155,19 @@ export function initLessonManager(domElements, coreAppFunctions) {
         domElements.canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
+    /**
+     * Genereert de lesknoppen en links voor een specifieke parent.
+     * @param {string} parentLessonId - De ID van de parent les.
+     */
     function generateLessonButtonsAndLinks(parentLessonId) {
         const childLessons = loadChildLessons(parentLessonId);
 
-        childLessons.forEach(lesson => {
+        childLessons.forEach((lesson, index) => {
             // Wrapper voor de button en de link
             const divWrapper = document.createElement('div');
-            lessonPathContainer.appendChild(divWrapper);
-            divWrapper.style = 'display: flex; flex-direction: row; width: 100%';
-
+            divWrapper.classList.add('lesson-entry');
+            divWrapper.classList.add('lesson-entry--initial'); // Voeg initieel verborgen klasse toe
+            
             // De button creëren en eventlisteners toevoegen
             const button = document.createElement('button');
             button.textContent = lesson.subid; // Gebruik subid als tekst
@@ -160,15 +178,23 @@ export function initLessonManager(domElements, coreAppFunctions) {
 
             // De link creëren en eventlisteners toevoegen
             const link = document.createElement('a');
-            link.href = `oefeningen/${lesson.id}.html#${lesson.subid.replace(/\s+/g, '-')}`; // Link naar de les pagina met anker
+            // AANGEPAST: Link naar de generieke uitlegpagina met lessonId als query parameter
+            link.href = `oefeningen/lesson_explanation.html?lessonId=${lesson.id}#${lesson.subid.replace(/\s+/g, '-')}`; 
             link.textContent = 'Read instructions'; // Aangepaste tekst voor de link
-            link.target = '_a'; // Open in een nieuw tabblad
+            link.target = '_blank'; // Open in een nieuw tabblad
             link.classList.add('lesson-explanation-link'); // Zorg dat de CSS klasse wordt toegepast
             divWrapper.appendChild(link);
+
+            lessonPathContainer.appendChild(divWrapper);
+
+            // Trigger de transitie na een kleine vertraging
+            setTimeout(() => {
+                divWrapper.classList.remove('lesson-entry--initial');
+            }, 50 + (index * 70)); // Staggered effect: 50ms basis + 70ms per item
         });
     }
 
-    // TODO: verplaatst deze naar de nodige plek.
+    // Genereer de parent lesson knoppen bij initialisatie
     generateParentLessonButtons();
     
 }
