@@ -162,6 +162,8 @@ export function initLessonManager(domElements, coreAppFunctions) {
     function generateLessonButtonsAndLinks(parentLessonId) {
         const childLessons = loadChildLessons(parentLessonId);
 
+        clearLessonPathContainer(); // Eerst leegmaken met transitie
+
         childLessons.forEach((lesson, index) => {
             // Wrapper voor de button en de link
             const divWrapper = document.createElement('div');
@@ -181,7 +183,7 @@ export function initLessonManager(domElements, coreAppFunctions) {
             // AANGEPAST: Link naar de generieke uitlegpagina met lessonId als query parameter
             link.href = `oefeningen/lesson_explanation.html?lessonId=${lesson.id}#${lesson.subid.replace(/\s+/g, '-')}`; 
             link.textContent = 'Read instructions'; // Aangepaste tekst voor de link
-            link.target = '_blank'; // Open in een nieuw tabblad
+            link.target = '_a'; // Open in een nieuw tabblad
             link.classList.add('lesson-explanation-link'); // Zorg dat de CSS klasse wordt toegepast
             divWrapper.appendChild(link);
 

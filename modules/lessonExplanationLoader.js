@@ -3,13 +3,17 @@
 // Importeer de lesconfiguraties
 import { lessonConfigurations } from '../oefeningen/lessonData.js';
 // Importeer de animatie-effecten voor de kleine ballen
-// Let op het relatieve pad: van oefeningen/scripts/ naar scripts/
 import { animateBalls, stopAnimatingBalls } from '../modules/ballAnimationEffects.js';
+// NIEUW: Importeer de laadindicator module
+import { initializeLoadingIndicator, showLoadingIndicator, hideLoadingIndicator } from '../modules/loadingIndicator.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const lessonId = urlParams.get('lessonId');
     const dynamicLessonContentDiv = document.getElementById('dynamicLessonContent');
+
+    // NIEUW: Initialiseer de laadindicator met de ID van het element
+    initializeLoadingIndicator('#loadingIndicator');
 
     if (lessonId) {
         let foundLesson = null;
@@ -22,6 +26,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (foundLesson && foundLesson.contentPath) {
+            // NIEUW: Toon laadindicator voordat de fetch begint
+            showLoadingIndicator();
+            dynamicLessonContentDiv.innerHTML = ''; // Leeg de content terwijl we laden
+
             try {
                 const response = await fetch(foundLesson.contentPath);
                 if (!response.ok) {
@@ -76,6 +84,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch (error) {
                 console.error('Fout bij het laden van lesinhoud:', error);
                 dynamicLessonContentDiv.innerHTML = `<p>Fout bij het laden van de lesinhoud voor ID: ${lessonId}.</p>`;
+            } finally {
+                // NIEUW: Verberg laadindicator nadat de fetch is voltooid (succes of fout)
+                hideLoadingIndicator();
             }
         } else {
             dynamicLessonContentDiv.innerHTML = `<p>Les met ID "${lessonId}" niet gevonden of geen inhoudspad gedefinieerd.</p>`;

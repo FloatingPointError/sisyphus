@@ -9,8 +9,8 @@ export function getDomElements() {
     return {
         appContainer: document.getElementById('appContainer'),
         canvas: document.getElementById('animationCanvas'),
-        // startButton: document.getElementById('startButton'),
-        // generateMountainsButton: document.getElementById('generateMountainsButton'),
+        startButton: document.getElementById('startButton'),
+        generateMountainsButton: document.getElementById('generateMountainsButton'),
         resetButton: document.getElementById('resetButton'),
         speedSlider: document.getElementById('speedSlider'),
         currentSpeedSpan: document.getElementById('currentSpeed'),
@@ -34,5 +34,8 @@ export function getDomElements() {
         parentLessonButtons: document.getElementById('parentLessonButtons'),
         playButton: document.getElementById('playButton'),
         stopButton: document.getElementById('stopButton'),
+        playIcon: document.querySelector('#playButton .play-icon'),
+        pauseIcon: document.querySelector('#playButton .pause-icon'),
+        lessonButtonsInnerContainer: document.querySelector('#lessonPathContainer .lesson-buttons') // NIEUW: Directe referentie
     };
 }
