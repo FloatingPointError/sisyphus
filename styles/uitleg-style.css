@@ -207,6 +207,11 @@ section h2 {
     font-family: monospace;
 }
 
+section ul li {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: clamp(0.9rem, 1vw, 1rem); /* Responsieve lijsttekst */
+}
 
 /* --- Media Queries voor Mobiel --- */
 @media (max-width: 768px) {
