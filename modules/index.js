@@ -36,6 +36,7 @@ export function getDomElements() {
         stopButton: document.getElementById('stopButton'),
         playIcon: document.querySelector('#playButton .play-icon'),
         pauseIcon: document.querySelector('#playButton .pause-icon'),
-        lessonButtonsInnerContainer: document.querySelector('#lessonPathContainer .lesson-buttons') // NIEUW: Directe referentie
+        lessonButtonsInnerContainer: document.querySelector('#lessonPathContainer .lesson-buttons'), // NIEUW: Directe referentie
+        metronomeCheckbox: document.getElementById('includeMetronomeCheckbox'),
     };
 }

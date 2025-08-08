@@ -49,4 +49,12 @@ export class Metronome {
     osc.start(time);
     osc.stop(time + 0.05);
   }
+
+  // Turns of the sound of the metronome
+  mute() {
+    if (this.isPlaying) {
+      this.stop();
+      this.isPlaying = false;
+    }
+  }
 }

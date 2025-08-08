@@ -162,7 +162,8 @@ button {
 }
 
 /* Aanpassingen voor de inclusief vlaktes knop */
-.controls-group .include-plateaus-row {
+.controls-group .include-plateaus-row,
+.controls-group .include-metronome-row {
     display: flex;
     align-items: baseline; /* Centreer checkbox en label verticaal */
     gap: 10px; /* Ruimte tussen checkbox en label */

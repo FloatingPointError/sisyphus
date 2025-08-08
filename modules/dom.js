@@ -12,7 +12,7 @@ export function setupEventListeners(domElements, state, functions) {
         numMountainsSlider, numFingersSlider, fingerColorInputs, colorTempoSlider,
         includePlateausCheckbox, toggleControlsButton, fullscreenButton,
         controlsContainer, currentSpeedSpan, currentNumMountainsSpan,
-        currentColorTempoSpan, currentNumFingersSpan, appContainer, canvas
+        currentColorTempoSpan, currentNumFingersSpan, appContainer, canvas, metronomeCheckbox,
     } = domElements;
 
 // --- Play Button Event Listener ---
@@ -109,6 +109,15 @@ export function setupEventListeners(domElements, state, functions) {
             toggleControlsButton.textContent = "Show settings";
         } else {
             toggleControlsButton.textContent = "Hide settings";
+        }
+    });
+
+    metronomeCheckbox.addEventListener('change', (event) => {
+        if (event.target.checked) {
+            functions.metronome.start(); // Start metronome if checkbox is checked
+        } else {
+            // Mute the metronome if the checkbox is unchecked
+            functions.metronome.mute();
         }
     });
 
