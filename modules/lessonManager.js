@@ -125,6 +125,9 @@ export function initLessonManager(domElements, coreAppFunctions) {
         colorTempoSlider.value = lesson.settings.colorTempo;
         currentColorTempoSpan.textContent = lesson.settings.colorTempo + ' BPM';
 
+        coreAppFunctions.metronome.setBPM(lesson.settings.colorTempo);
+
+
         // Pas vingerkleuren aan
         fingerColorInputs.forEach((input, index) => {
             if (lesson.settings.fingerColors && lesson.settings.fingerColors[index]) {

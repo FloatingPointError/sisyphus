@@ -39,7 +39,7 @@ export function setupEventListeners(domElements, state, functions) {
         state.currentPathData = pathDataToUse; // Update de huidige paddata in de state
         
         // Start de animatie of countdown direct met het gekozen pad
-        functions.startAnimationOrCountdown(state, functions, pathDataToUse);  
+        functions.startAnimationOrCountdown(state, functions, pathDataToUse);
         functions.triggerGlowEffect(canvas); // Trigger glow effect
     });
 
@@ -48,14 +48,17 @@ export function setupEventListeners(domElements, state, functions) {
     stopButton.addEventListener('click', () => {
         // Stop alleen als er een animatie loopt of een countdown bezig is
         if (state.animationId || state.isCountingDown) {
-            functions.resetBall(state, functions, null); 
+            functions.resetBall(state, functions, null);
+            functions.metronome.stop();
         }
     });
 
     // --- Reset Button Event Listener (reset alle instellingen en stopt animatie) ---
     resetButton.addEventListener('click', () => {
         // Roep resetBall aan met de standaardinstellingen om alles te resetten
-        functions.resetBall(state, functions, functions.DEFAULT_SETTINGS); 
+        functions.resetBall(state, functions, functions.DEFAULT_SETTINGS);
+        functions.metronome.stop();
+        functions.metronome.setBPM(functions.DEFAULT_SETTINGS.colorTempo);
     });
 
     speedSlider.addEventListener('input', () => {
@@ -93,6 +96,8 @@ export function setupEventListeners(domElements, state, functions) {
         const newTempo = parseInt(colorTempoSlider.value);
         currentColorTempoSpan.textContent = newTempo + ' BPM';
         functions.ballColorModule.updateColorTempo(newTempo);
+        // Update het BPM van de metronoom
+        functions.metronome.setBPM(newTempo);
         if (!state.isCountingDown && state.animationId) {
             console.log("Redrawing with new color tempo");
         }

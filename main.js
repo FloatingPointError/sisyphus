@@ -4,11 +4,14 @@ import { ballColorModule } from './elements/ballColorModule.js';
 import { getDomElements } from './modules/index.js';
 import { drawSkyElements } from './elements/skyElements.js';
 import { initLessonManager } from './modules/lessonManager.js';
+import { Metronome } from './modules/metronome.js';
 
 // Importeer de nieuwe modules
 import { initializeFlatPathCurves, generateMountainPath, getYForX } from './modules/paths.js';
 import { animate, startAnimationOrCountdown, resetBall, calculateBallRadius } from './modules/animation.js';
 import { setupEventListeners, adjustCanvasSizeAndPath, setCanvasWidthCssVariable, triggerGlowEffect } from './modules/dom.js';
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const domElements = getDomElements();
@@ -32,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         flatPath: null,
         isCountingDown: false,
         countdownValue: 4,
-        wakeLock: null // NIEUW: Property om de WakeLockSentinel op te slaan
+        wakeLock: null, // NIEUW: Property om de WakeLockSentinel op te slaan
     };
 
     // DEFINIEER DE STANDAARDINSTELLINGEN HIER
@@ -43,6 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
         numFingers: 1, // Standaardwaarde uit HTML
         colorTempo: 40, // Standaardwaarde uit HTML
         fingerColors: ['#f05442', '#ffe064', '#0851bb', '#944dff'] // Standaardkleuren uit HTML
+    };
+
+    // Callback function executed on each metronome 'tick'
+    const onMetronomeTick = () => {
+        // Trigger the ball color pulse effect here
+        
     };
 
     /**
@@ -95,7 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
         DEFAULT_SETTINGS,
         state, // BELANGRIJK: Geef de state door
         requestWakeLock, // NIEUW: Voeg wake lock functies toe
-        releaseWakeLock  // NIEUW: Voeg wake lock functies toe
+        releaseWakeLock,  // NIEUW: Voeg wake lock functies toe
+        metronome: new Metronome(DEFAULT_SETTINGS.colorTempo, onMetronomeTick),
     };
 
     // Initialiseer het pad en de bal

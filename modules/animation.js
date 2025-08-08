@@ -139,12 +139,20 @@ export function draw(state, functions) {
  * @param {{curves: Array}} pathData De padgegevens voor de animatie.
  */
 export function startAnimationOrCountdown(state, functions, pathData) {
-    cancelAnimationFrame(state.animationId);
-    clearInterval(state.countdownIntervalId);
-    state.animationId = null; // Zorg dat animationId null is bij start
-    // state.currentPathData = pathData; // <-- DEZE REGEL IS VERWIJDERD
-    // De pathData is al ingesteld in state.currentPathData door de aanroepende functie (playButton)
+
+    if (state.animationId) {
+        cancelAnimationFrame(state.animationId);
+    }
     
+    if (state.countdownIntervalId) {
+        clearInterval(state.countdownIntervalId);
+    }
+
+    state.animationId = null; // Zorg dat animationId null is bij start
+
+    // Stop de metronoom, deze wordt hieronder opnieuw gestart
+    functions.metronome.stop();    
+
     // Initialiseer kleurenlogica met HUIDIGE instellingen (niet default)
     functions.ballColorModule.initializeBallColorLogic(
         parseInt(state.domElements.numFingersSlider.value),
@@ -172,6 +180,7 @@ export function startAnimationOrCountdown(state, functions, pathData) {
             state.isCountingDown = false;
             lastFrameTime = performance.now();
             animate(state, functions, lastFrameTime);
+            functions.metronome.start();
         }
     }, beatInterval);
 }
@@ -247,6 +256,8 @@ export function resetBall(state, functions, defaultSettings) {
         // BELANGRIJK: Hier wordt het pad NIET opnieuw gegenereerd,
         // zodat state.currentPathData behouden blijft zoals het was ingesteld door playButton.
     }
+
+
 
     // Reset de balpositie en straal
     functions.calculateBallRadius(state); 
