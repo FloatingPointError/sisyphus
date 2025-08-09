@@ -50,11 +50,16 @@ export class Metronome {
     osc.stop(time + 0.05);
   }
 
-  // Turns of the sound of the metronome
+  /**
+   * Mute of unmute de metronoom.
+   * Dit pauzeert of hervat de audio output zonder de scheduler te stoppen.
+   */
   mute() {
-    if (this.isPlaying) {
-      this.stop();
-      this.isPlaying = false;
+    if (this.audioContext.state === 'running') {
+      this.audioContext.suspend();
+    } else if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
     }
+    this.isMuted = !this.isMuted; // Update de mute status
   }
 }

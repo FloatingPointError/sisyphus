@@ -1,36 +1,48 @@
-class ScreenLocker {
-    let wakeLock = null;
-    
+// modules/screenLocker.js
+
+/**
+ * Een klasse om de Screen Wake Lock API te beheren.
+ * Voorkomt dat het scherm uitschakelt terwijl de animatie actief is.
+ */
+export class ScreenLocker {
+    constructor() {
+        this.wakeLock = null;
+    }
+
     /**
      * Vraagt een wake lock aan om te voorkomen dat het scherm uitschakelt.
      */
-    async function requestWakeLock() {
+    async requestWakeLock() {
+        // Controleer of de Wake Lock API wordt ondersteund
         if ('wakeLock' in navigator) {
             try {
-                wakeLock = await navigator.wakeLock.request('screen');
+                // Vraag de 'screen' wake lock aan
+                this.wakeLock = await navigator.wakeLock.request('screen');
                 console.log('Wake Lock activated!');
-                wakeLock.addEventListener('release', () => {
+
+                // Voeg een listener toe voor wanneer de lock wordt vrijgegeven
+                this.wakeLock.addEventListener('release', () => {
                     console.log('Wake Lock released by the system.');
-                    wakeLock = null; // Zorg dat de referentie wordt geleegd
+                    this.wakeLock = null;
                 });
+
             } catch (err) {
-                console.error(`Fout bij aanvragen Wake Lock: ${err.name}, ${err.message}`);
+                // Toon een waarschuwing als er een fout optreedt
+                console.error(`Error when requesting Wake Lock: ${err.name}, ${err.message}`);
             }
         } else {
-            console.warn('Wake Lock API wordt niet ondersteund in deze browser.');
+            console.warn('Wake Lock API is not supported by this browser.');
         }
     }
 
     /**
      * Geeft de actieve wake lock vrij.
      */
-    function releaseWakeLock() {
-        if (state.wakeLock) {
-            state.wakeLock.release();
-            state.wakeLock = null;
-            console.log('Wake Lock vrijgegeven!');
+    releaseWakeLock() {
+        if (this.wakeLock) {
+            this.wakeLock.release();
+            this.wakeLock = null;
+            console.log('Wake Lock released!');
         }
     }
 }
-    
-    // Een object om alle geëxporteerde functies van de modules te bundelen

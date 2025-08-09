@@ -113,12 +113,7 @@ export function setupEventListeners(domElements, state, functions) {
     });
 
     metronomeCheckbox.addEventListener('change', (event) => {
-        if (event.target.checked) {
-            functions.metronome.start(); // Start metronome if checkbox is checked
-        } else {
-            // Mute the metronome if the checkbox is unchecked
-            functions.metronome.mute();
-        }
+        functions.metronome.mute();
     });
 
     // fullscreenButton.addEventListener('click', () => {

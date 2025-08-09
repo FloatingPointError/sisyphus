@@ -1,19 +1,35 @@
-// main.js
+/**
+ * Main.js is the central orchestrator of the app
+ * It defines the global state and default settings
+ * Controls the main animation cycle
+ */
 
 import { ballColorModule } from './elements/ballColorModule.js';
 import { getDomElements } from './modules/index.js';
-import { drawSkyElements } from './elements/skyElements.js';
 import { initLessonManager } from './modules/lessonManager.js';
 import { Metronome } from './modules/metronome.js';
-
-// Importeer de nieuwe modules
+import { ScreenLocker } from './modules/screenLocker.js';
 import { initializeFlatPathCurves, generateMountainPath, getYForX } from './modules/paths.js';
 import { animate, startAnimationOrCountdown, resetBall, calculateBallRadius } from './modules/animation.js';
 import { setupEventListeners, adjustCanvasSizeAndPath, setCanvasWidthCssVariable, triggerGlowEffect } from './modules/dom.js';
 
-
+// Register Service Worker function for the PWA
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch(error => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        });
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    registerServiceWorker();
+
     const domElements = getDomElements();
     const ctx = domElements.canvas.getContext('2d');
     
@@ -21,24 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEFAULT_CANVAS_HEIGHT = 400;
     const CANVAS_ASPECT_RATIO = DEFAULT_CANVAS_WIDTH / DEFAULT_CANVAS_HEIGHT;
 
-    // Globaal state-object om de status te beheren
+    const screenLocker = new ScreenLocker();
+
+    /**
+     * Global state object to control the state
+     */
     const state = {
         domElements,
         ctx,
         canvasWidth: domElements.canvas.width,
         canvasHeight: domElements.canvas.height,
         canvasAspectRatio: CANVAS_ASPECT_RATIO,
-        ballSpeed: parseFloat(domElements.speedSlider.value), // Wordt overschreven door DEFAULT_SETTINGS
+        ballSpeed: parseFloat(domElements.speedSlider.value), 
         animationId: null,
         countdownIntervalId: null,
         currentPathData: null,
         flatPath: null,
         isCountingDown: false,
         countdownValue: 4,
-        wakeLock: null, // NIEUW: Property om de WakeLockSentinel op te slaan
+        screenLocker,
     };
 
-    // DEFINIEER DE STANDAARDINSTELLINGEN HIER
+    /**
+     * Default settings for the app upon loading
+     */
     const DEFAULT_SETTINGS = {
         speed: 1.0,
         numMountains: 1, // Standaardwaarde uit HTML
@@ -48,45 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
         fingerColors: ['#f05442', '#ffe064', '#0851bb', '#944dff'] // Standaardkleuren uit HTML
     };
 
-    // Callback function executed on each metronome 'tick'
+    /**
+     * Callback function executed on each metronome 'tick'
+     * Leaving it here for future implementations
+     */
     const onMetronomeTick = () => {
-        // Trigger the ball color pulse effect here
-        
+        // Do something
     };
 
     /**
-     * Vraagt een wake lock aan om te voorkomen dat het scherm uitschakelt.
+     * The functions object passes on all exported functions of the modules,
+     * So it doesn't need to be passed everywhere separately
      */
-    async function requestWakeLock() {
-        if ('wakeLock' in navigator) {
-            try {
-                state.wakeLock = await navigator.wakeLock.request('screen');
-                console.log('Wake Lock geactiveerd!');
-                state.wakeLock.addEventListener('release', () => {
-                    console.log('Wake Lock vrijgegeven door systeem.');
-                    state.wakeLock = null; // Zorg dat de referentie wordt geleegd
-                });
-            } catch (err) {
-                console.error(`Fout bij aanvragen Wake Lock: ${err.name}, ${err.message}`);
-            }
-        } else {
-            console.warn('Wake Lock API wordt niet ondersteund in deze browser.');
-        }
-    }
-
-    /**
-     * Geeft de actieve wake lock vrij.
-     */
-    function releaseWakeLock() {
-        if (state.wakeLock) {
-            state.wakeLock.release();
-            state.wakeLock = null;
-            console.log('Wake Lock vrijgegeven!');
-        }
-    }
-
-    // Een object om alle geëxporteerde functies van de modules te bundelen
-    // Zo hoeven we ze niet overal apart door te geven
     const functions = {
         initializeFlatPathCurves,
         generateMountainPath,
@@ -102,39 +97,38 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerGlowEffect,
         ballColorModule,
         DEFAULT_SETTINGS,
-        state, // BELANGRIJK: Geef de state door
-        requestWakeLock, // NIEUW: Voeg wake lock functies toe
-        releaseWakeLock,  // NIEUW: Voeg wake lock functies toe
+        state, // IMPORTANT: passes the state.
         metronome: new Metronome(DEFAULT_SETTINGS.colorTempo, onMetronomeTick),
+        requestWakeLock: () => state.screenLocker.requestWakeLock(), // Adds the screenlocker methods
+        releaseWakeLock: () => state.screenLocker.releaseWakeLock(),
     };
 
-    // Initialiseer het pad en de bal
+    // Initialises the path and the ball
     state.flatPath = initializeFlatPathCurves(state.canvasWidth, state.canvasHeight);
     state.currentPathData = state.flatPath;
 
-    // Pas de canvasgrootte aan op basis van de venstergrootte
+    // Adjusts the canvas based on the screen size
     adjustCanvasSizeAndPath(state, functions);
 
-    // Initialiseer de les manager met de benodigde functies en state
-    // Geef het hele 'functions' object door, dat 'state' en alle andere functies bevat
+    // Initialises the lesson manager with the neccesary functions and state
+    // Passes the entire functions object, which contains the state and other functions
     initLessonManager(domElements, functions); 
     
-    // Koppel de event listeners
+    // Coupling the event listeners
     setupEventListeners(domElements, state, functions);
 
-    // Start de app door de bal te resetten en te tekenen met de standaardinstellingen
+    // Resets the ball with the standard state and defaults
     resetBall(state, functions, functions.DEFAULT_SETTINGS);
 
-    // Voeg een event listener toe voor 'visibilitychange' om wake lock opnieuw aan te vragen
-    // als de pagina weer zichtbaar wordt (wake lock kan automatisch worden vrijgegeven wanneer de tab onzichtbaar is)
+    // Adds an event listener for the visibilitychange to request the wake lock again
+    // If the page becomes visible again the wake lock springs into action
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible' && state.animationId !== null) {
-            // Vraag alleen opnieuw aan als de animatie actief is
-            requestWakeLock();
+            // Only asks again if the animation is active
+            state.screenLocker.requestWakeLock();
         } else if (document.visibilityState === 'hidden') {
-            // Optioneel: geef wake lock vrij als de tab verborgen wordt
-            // Dit kan nuttig zijn om batterij te sparen als de animatie niet stopt.
-            // releaseWakeLock(); // Kan hier worden aangeroepen, maar resetBall dekt dit ook af bij stoppen.
+            // Releases the wake lock if tab is being hidden.
+            state.screenLocker.releaseWakeLock();
         }
     });
 });
